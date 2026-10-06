@@ -2830,9 +2830,8 @@ const {spring, play, finished, reducedMotion}=__modules["src/lib/motion.js"];
 // Lives outside #app so polling, navigation and sync never replace an open draft.
 // Drafts stay in memory, not shared browser storage, and are cleared on account change.
 class ActivityComposer {
-  constructor({ state, save, notify, launch, onOpen, onClose, onRotation }) {
+  constructor({ state, save, notify, launch, onOpen, onClose }) {
     this.state = state; this.save = save; this.notify = notify;
-    this.onRotation = onRotation;
     this.launch = launch || (options => this.open(options)); this.onOpen = onOpen; this.onClose = onClose;
     this.host = document.querySelector('#quick-add-root');
     this.dialog = document.querySelector('#composer');
@@ -2909,7 +2908,6 @@ class ActivityComposer {
       !!this.lastView && view !== this.lastView && !document.hidden && !reducedMotion();
   }
   cancelSpin() {
-    cancelAnimationFrame(this.rotationFrame); this.rotationFrame = null;
     if (this.rotation) { this.rotation.onfinish = null; this.rotation.cancel(); }
     this.rotation = null;
   }
@@ -2925,26 +2923,9 @@ class ActivityComposer {
     // Rotate only the plus glyph. Hover/press feedback on its parent survives;
     // a rapid route change interrupts the decorative animation immediately.
     const rotation = this.rotation = plus.animate([{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${this.rotationEnd}deg)` }], { duration: 380 + turns * 110, easing: 'linear' });
-    let completed = 0;
-    const soundThrough = count => {
-      // Read the animation's clock, so pausing/cancelling the glyph also pauses
-      // or cancels the sound. There is no wall-clock timeout/audio backlog.
-      while (completed < count) { completed++; this.onRotation?.(); }
-    };
-    const tick = () => {
-      if (this.rotation !== rotation) return;
-      if (document.hidden || reducedMotion() || rotation.playState === 'idle') { this.cancelSpin(); return; }
-      const progress = rotation.effect.getComputedTiming().progress;
-      if (progress !== null) soundThrough(Math.min(turns, Math.floor(progress * turns + 1e-7)));
-      this.rotationFrame = requestAnimationFrame(tick);
-    };
     rotation.onfinish = () => {
-      if (this.rotation !== rotation || document.hidden || reducedMotion()) return;
-      soundThrough(turns);
-      cancelAnimationFrame(this.rotationFrame); this.rotationFrame = null;
-      this.rotation = null;
+      if (this.rotation === rotation) this.rotation = null;
     };
-    this.rotationFrame = requestAnimationFrame(tick);
   }
   updateButton() {
     const hasDraft = !!this.draft;
@@ -3447,18 +3428,17 @@ __modules["src/lib/feedback.js"] = (() => {
       if (context.state === 'suspended') context.resume().catch(() => {});
     } catch { context = null; buffer = null; successBuffer = null; }
   }
-  function tap({ sound = settings.sound, haptic = settings.haptic, rotation = false } = {}) {
-    if (document.hidden || (!rotation && performance.now() - lastTap < 8)) return;
-    if (!rotation) lastTap = performance.now();
-    sound = settings.sound && sound; haptic = settings.haptic && haptic;
+  function tap() {
+    if (document.hidden || performance.now() - lastTap < 8) return;
+    lastTap = performance.now();
     if (native()) {
-      try { window.HarumoaFeedback.tap(sound, haptic, settings.volume); } catch {}
+      try { window.HarumoaFeedback.tap(settings.sound, settings.haptic, settings.volume); } catch {}
       return;
     }
-    if (haptic && typeof navigator.vibrate === 'function') {
+    if (settings.haptic && typeof navigator.vibrate === 'function') {
       try { navigator.vibrate(8); } catch {}
     }
-    if (!sound || !settings.volume) return;
+    if (!settings.sound || !settings.volume) return;
     prepare();
     if (!context || !buffer || context.state !== 'running') return;
     try {
@@ -3485,10 +3465,7 @@ __modules["src/lib/feedback.js"] = (() => {
       source.start();
     } catch {}
   }
-  function rotationTick() {
-    if (settings.sound && settings.volume) tap({ haptic: false, rotation: true });
-  }
-  function install({ onNavigation } = {}) {
+  function install() {
     load();
     document.addEventListener('pointerdown', event => {
       if (event.isTrusted && event.isPrimary && event.button === 0) prepare();
@@ -3501,13 +3478,12 @@ __modules["src/lib/feedback.js"] = (() => {
       const target = event.composedPath().find(node => node instanceof Element &&
         node.matches('button:not(:disabled),a[href],summary,input:not(:disabled):not([type=hidden]):not([type=file]),select:not(:disabled),textarea:not(:disabled),[role=button]:not([aria-disabled=true]),[role=tab]:not([aria-disabled=true])'));
       if (!target || target.closest('[inert],.route-layer,[data-feedback-skip]')) return;
-      if (target.matches('[data-action=nav]') && onNavigation) { onNavigation(target.dataset.id); return; }
       tap();
     }, { capture: true });
     document.addEventListener('visibilitychange', () => { if (document.hidden) { stop(); context?.suspend().catch(() => {}); } });
     window.addEventListener('storage', event => { if (event.key === KEY) load(); });
   }
-  return { install, tap, rotationTick, success, save, native, values: () => ({ ...settings }) };
+  return { install, tap, success, save, native, values: () => ({ ...settings }) };
 })();
 
 __modules["src/main.js"]=(()=>{
@@ -4156,16 +4132,11 @@ function calendarRouteMode(view, entryContext) {
   if (view !== 'calendar') return s.calendarMode;
   return ['month','week','day'].includes(entryContext?.calendarMode) ? entryContext.calendarMode : HMEngine.calendarViewOrder(s.data?.preferences)[0];
 }
-function menuFeedback(view) {
-  // A changing screen gets exactly N audible clicks for N full turns. Keep
-  // the tap's single haptic; an active menu or reduced motion clicks immediately.
-  Feedback.tap({ sound: !composer?.willSpin(view) });
-}
 navigation = new PageNavigator({
   root,
   routes: NAV,
   state: () => s,
-  onMenuTap: menuFeedback,
+  onMenuTap: () => Feedback.tap(),
   // Navigation clears the Today filters. Its inert preview must use the same
   // state as commit, otherwise rows change height as the overlay is removed.
   preview: (view, entryContext) => appView({ ...s, view, calendarMode: calendarRouteMode(view, entryContext), owner: s.data.profile.id, date: s.view === 'family' && view !== 'family' ? (s.personalDate || today(s.data.family.timezone)) : s.date, search: '', category: '', taskFilter: 'all' }),
@@ -4178,10 +4149,9 @@ navigation = new PageNavigator({
   }
 });
 installPressMotion();
-Feedback.install({ onNavigation: menuFeedback });
+Feedback.install();
 composer = new ActivityComposer({
   state: () => s,
-  onRotation: () => Feedback.rotationTick(),
   notify: toast,
   launch: options => creation.open(options),
   onOpen: () => creation.mount(composer.dialog, 'activity'),
