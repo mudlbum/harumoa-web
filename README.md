@@ -2,6 +2,10 @@
 
 Android v0.9.21와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
+**웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
+
+이 저장소는 GitHub Actions로 Pages에 배포합니다. GitHub Desktop에서 `main`의 변경을 커밋하고 **Push origin**을 누르면 같은 주소로 자동 업데이트됩니다. Actions의 **Deploy Harumoa web**가 성공하면 배포가 완료됩니다. 현재 배포 주소의 Google JavaScript origin은 기존 앱과 같은 웹 OAuth 클라이언트에 등록했습니다.
+
 ## 사용
 
 배포 주소를 열고 **Google로 계속하기**를 누른 뒤, 휴대폰 앱에서 사용하던 Google 계정으로 저장 권한을 연결합니다. 기존 하루모아 파일을 먼저 찾아 열므로 다른 기기에서 가족이나 개인 공간을 다시 만들 필요가 없습니다. 로그인 없이 체험하기는 별도의 로컬 예시 데이터입니다.
