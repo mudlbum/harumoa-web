@@ -1,1 +1,1 @@
-window.HARUMOA_CONFIG={"mode":"sheets","pollMs":30000,"googleWebClientId":"155377377178-r0fjcidovkpnvk57qfjlems89qnkaqbh.apps.googleusercontent.com","googleApiKey":"","appVersion":"0.9.19","buildVersion":"0.9.19-web.1","buildNumber":109};window.HARUMOA_BUILT=true;
+window.HARUMOA_CONFIG={"mode":"sheets","pollMs":30000,"googleWebClientId":"155377377178-r0fjcidovkpnvk57qfjlems89qnkaqbh.apps.googleusercontent.com","googleApiKey":"","appVersion":"0.9.20","buildVersion":"0.9.20-web.1","buildNumber":110};window.HARUMOA_BUILT=true;
