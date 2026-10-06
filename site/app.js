@@ -522,7 +522,7 @@ function applyCommand(input,actorId,action,p={},now=Date.now()){
           const row = owned('categories', p.id); versionCheck(row, p.version); s.categories = s.categories.filter(c => c.id !== row.id);
           s.activities.filter(a => a.category_id === row.id).forEach(a => { a.category_id = null; a.version++; }); break;
         }
-        
+
         case 'preferences_save': {
           const current={version:0,...(s.preferences[actor.id]||{})}; versionCheck(current,p.version||0);
           s.preferences[actor.id]={...validateSettings(p.settings),version:current.version+1}; result=s.preferences[actor.id]; break;
@@ -563,7 +563,7 @@ function applyCommand(input,actorId,action,p={},now=Date.now()){
         case 'invite_create': throw new Error(HML.t("실제 가족 초대는 클라우드 연결 후 사용할 수 있습니다."));
         default: throw new Error(HML.t("지원하지 않는 요청입니다."));
       }
-      
+
  s.ledger=s.ledger.slice(-10000); assert(s.activities.length<=20000,HML.t("활동 저장 한도를 확인해 주세요."));
  return {state:s,result};
 }
@@ -1170,7 +1170,7 @@ window.HMGoogleGateway=(()=>{
     if(r?.owner_id===this.user.id&&p.status==='cancelled'&&r.status==='pending'){r.status='cancelled';r.resolved_at=new Date().toISOString();result=r.id;}else {
     if(!r||r.status!=='pending'||reward?.owner_id!==this.user.id||!['delivered','cancelled'].includes(p.status))throw new Error('본인이 등록한 보상의 대기 신청만 처리해 주세요.');
     if(p.status==='delivered'&&(!w||w.balance<w.held))throw new Error('예약 포인트가 부족해 지급을 확인하지 않았어요.');
-    state.deliveries.push({id:r.id,request_id:r.id,owner_id:this.user.id,recipient_id:r.owner_id,status:p.status,cost:r.cost_snapshot,resolved_at:new Date().toISOString()});result=r.id;} 
+    state.deliveries.push({id:r.id,request_id:r.id,owner_id:this.user.id,recipient_id:r.owner_id,status:p.status,cost:r.cost_snapshot,resolved_at:new Date().toISOString()});result=r.id;}
    }else{
     if(['reward_save','reward_delete'].includes(action)&&p.id&&state.rewards.find(r=>r.id===p.id)?.owner_id!==this.user.id)throw new Error('본인이 등록한 보상만 수정해 주세요.');
     const applied=HMModel.applyCommand(state,this.user.id,action,p);Object.assign(state,applied.state);result=applied.result;
@@ -1294,6 +1294,7 @@ window.HMGoogleUI=(()=>{
  function connectionList(g){return (g.own?.connections||[]).filter(c=>c.direction!=='media').map(c=>`<article class="gs-connection"><span><bdi>${h(c.email||c.ownerEmail)}</bdi><small>${h(c.direction==='inbound'?t('가족 자료가 연결되어 있어요','Family records connected'):t('이 계정에 내 가족 자료를 공유했어요','Family records shared with this account'))}</small></span>${c.direction==='outbound'?button(t('초대 다시 보내기','Send invitation again'),'resend',`data-file="${h(c.fileId)}" data-email="${h(c.email)}"`):''}${button(t('연결 해제','Disconnect'),'remove',`data-file="${h(c.fileId)}" data-email="${h(c.email||'')}"`)}</article>`).join('')||`<p>${h(t('아직 연결된 가족이 없어요. 가족 초대부터 시작해 주세요.','No family connected yet. Start by inviting someone.'))}</p>`;}
  function center(){const g=gateway();if(!g.user)return help();
   const d=HMServices.subdialog(t('Google 연결','Google connection'),`<div class="gs-stack"><p><bdi>${h(g.user.email)}</bdi></p>${familyProgress(g)}<p class="gs-status" role="status">${h(status(g))}</p><div class="hm-row">${primary(t('가족 초대하기','Invite family'),'family-send')}${button(t('받은 초대로 연결','Use an invitation'),'family-join')}${button(t('지금 저장 확인','Check sync now'),'sync')}</div><p class="muted">${h(t('내 기록은 내 Google에 자동 저장합니다. 가족은 별도로 초대해 연결합니다.','Your records save to your Google account. Invite family separately.'))}</p><details><summary>${h(t('연결한 가족','Connected family'))}</summary>${connectionList(g)}</details><details><summary>${h(t('캘린더 연결 · 선택','Calendar · optional'))}</summary><div class="gs-stack"><p>${h(t('시간이 있는 일정을 Google Calendar에도 표시합니다.','Show timed plans in Google Calendar too.'))}</p>${button(t('캘린더 연결','Connect Calendar'),'calendar-connect')}${button(t('캘린더 갱신','Refresh Calendar'),'calendar-sync')}</div></details><details><summary>${h(t('저장 파일과 세부 설정','Files and advanced settings'))}</summary><div class="gs-stack">${Object.entries(g.docs).map(([kind,v])=>`<a class="btn secondary" href="https://docs.google.com/spreadsheets/d/${h(v.id)}/edit" target="_blank" rel="noopener noreferrer">${h({private:t('내 비공개 기록','My private records'),activity:t('부모와 공유한 활동','Shared activities'),rewards:t('가족 보상','Family rewards')}[kind]||kind)}</a>`).join('')}<label class="field"><span>${h(t('앱 사용 중 갱신 간격','Refresh while using the app'))}</span><select data-gs-poll>${[30,60,120,300].map(n=>`<option value="${n*1000}" ${g.pollMs===n*1000?'selected':''}>${n} ${h(t('초','seconds'))}</option>`).join('')}</select></label>${button(t('Google 다시 연결','Reconnect Google'),'reconnect')}${button(t('연결 도움말','Connection help'),'help')}${button(t('충돌 확인','Review conflicts'),'conflicts')}<p class="muted">${h(t('비공개 기록 파일은 가족에게 공유하지 마세요. 앱을 다시 열면 가족 자료를 갱신합니다.','Keep your private records file private. Family data refreshes when you return to the app.'))}</p></div></details><details><summary>${h(t('내 데이터 관리','Manage my data'))}</summary><div class="gs-stack"><p>${h(t('아래 삭제는 하루모아가 만든 내 파일만 Drive 휴지통으로 옮깁니다.','Only files created by Harumoa are moved to Drive Trash.'))}</p>${button(t('내 하루모아 파일 휴지통으로','Move my Harumoa files to Trash'),'trash')}<a href="https://myaccount.google.com/connections" target="_blank" rel="noopener noreferrer">${h(t('Google에서 앱 접근 권한 관리','Manage app access in Google'))}</a></div></details><div data-gs-error role="alert" class="form-error"></div></div>`);
+  if(g.reconnect||!g.auth.accessToken||g.auth.expiry<=Date.now()+60000){const reconnect=d.querySelector('[data-gs="reconnect"]');reconnect.classList.replace('secondary','primary');d.querySelector('.gs-status').after(reconnect);}
   d.querySelector('[data-gs-poll]').onchange=ev=>{HMGoogleAuth.put('hm.google.poll',Number(ev.target.value));g.nextPull=0;};
  }
  function family(mode='send'){
