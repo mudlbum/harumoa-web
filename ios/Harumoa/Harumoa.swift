@@ -84,6 +84,11 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
             web.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor), web.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor)
         ])
         if let client = googleClient() { GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: client) }
+        // Recover only our unfinished temporary recordings after a process exit.
+        for file in (try? FileManager.default.contentsOfDirectory(at: FileManager.default.temporaryDirectory, includingPropertiesForKeys: nil)) ?? [] {
+            if file.lastPathComponent.hasPrefix("harumoa-"), file.pathExtension == "m4a",
+               UUID(uuidString: String(file.deletingPathExtension().lastPathComponent.dropFirst("harumoa-".count))) != nil { try? FileManager.default.removeItem(at: file) }
+        }
         NotificationCenter.default.addObserver(self, selector: #selector(background), name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(foreground), name: UIApplication.didBecomeActiveNotification, object: nil)
         web.load(URLRequest(url: URL(string: "harumoa://localhost/index.html")!))
@@ -144,7 +149,11 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
                         UserDefaults.standard.set(identity, forKey: "harumoa.selectedGoogle")
                         self.event("harumoa:google-auth", ["requestId": id, "email": identity["email"]!, "name": identity["name"]!])
                     } else {
-                        user = try await GIDSignIn.sharedInstance.restorePreviousSignIn()
+                        do { user = try await GIDSignIn.sharedInstance.restorePreviousSignIn() }
+                        catch {
+                            guard args.count > 2, args[2] as? Bool == true else { throw error }
+                            user = try await GIDSignIn.sharedInstance.signIn(withPresenting: self).user
+                        }
                         guard generation == self.authGeneration else { GIDSignIn.sharedInstance.signOut(); self.googleError(id, "cancelled", "Google account changed."); return }
                         let selected = UserDefaults.standard.dictionary(forKey: "harumoa.selectedGoogle")?["email"] as? String
                         guard selected?.lowercased() == user.profile?.email.lowercased() else { self.googleError(id, "account_mismatch", "Reconnect the selected Google account."); return }
@@ -261,6 +270,7 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
     @objc func background() {
         cancelRecording(); players.values.forEach { $0.stop() }
         web.evaluateJavaScript("window.HMServices?.cleanup();", completionHandler: nil)
+        for token in Array(assets.recordings.keys) { assets.discard(token) }
     }
     @objc func foreground() {
         if permissionReady { beginRecording() }
