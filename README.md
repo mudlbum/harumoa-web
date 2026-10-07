@@ -4,6 +4,10 @@ Android v0.9.22와 같은 데이터 모델을 사용하는 PC·모바일 브라�
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 
+**Android 가족 테스트:** [v0.9.22 APK 내려받기](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.22/harumoa-v0.9.22-stable-composer-test.apk) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.22) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.22/harumoa-family-test-ko.md)
+
+웹 주소와 APK 링크를 가족에게 공유할 수 있습니다. Google 설정 없이 화면을 볼 때는 **로그인 없이 기능 체험**을 선택합니다. 실제 Google 저장에는 등록된 테스트 계정을 사용하며, 새 참여자의 Google 이메일은 개발자에게 알려 주세요. 테스터가 Cloud 프로젝트나 OAuth 클라이언트를 만들 필요는 없습니다. 웹 체험과 직접 받은 APK 설치는 Google Play 비공개 테스트의 참여 기록에 포함되지 않습니다.
+
 이 저장소는 GitHub Actions로 Pages에 배포합니다. GitHub Desktop에서 `main`의 변경을 커밋하고 **Push origin**을 누르면 같은 주소로 자동 업데이트됩니다. Actions의 **Deploy Harumoa web**가 성공하면 배포가 완료됩니다. 현재 배포 주소의 Google JavaScript origin은 기존 앱과 같은 웹 OAuth 클라이언트에 등록했습니다.
 
 ## 사용
