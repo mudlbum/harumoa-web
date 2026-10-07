@@ -513,6 +513,26 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 @media(hover:hover){.calendar-item:hover .calendar-resize{display:flex}}
 @media(min-width:901px){.calendar-drag-status{bottom:24px}}
 
+/* Month fills the available screen. Extra records open in the existing day view. */
+.calendar-main.screen-main{padding-bottom:12px}
+.month-grid.calendar-scroller{height:calc(100dvh - 250px);display:flex;flex-direction:column;max-height:none;overflow:hidden;touch-action:pan-y pinch-zoom}
+.month-grid .month-week-labels{flex-shrink:0}
+.month-grid .month-cells{flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.month-grid .month-cell{min-height:0;padding:2px;position:relative;display:flex;flex-direction:column}
+.month-grid .month-number{height:22px;min-height:22px;width:100%;border-radius:5px;margin:0;font-size:11px}
+.month-grid .month-event{margin:1px 0;flex:1;min-height:0}
+.month-grid .month-event .calendar-open{min-height:0;padding:2px;justify-content:center}
+.month-grid .month-event .calendar-open small{display:none}
+.month-grid .month-event .calendar-open strong{line-height:1.25}
+.month-grid .more-events{position:absolute;right:2px;top:2px;min-width:22px;height:22px;padding:1px;font-size:9px;background:#eef4e8;border-radius:5px}
+.calendar-scroller{touch-action:pan-y pinch-zoom}
+.calendar-time-head[data-cal-pan]{touch-action:pinch-zoom}
+
+.calendar-toolbar{padding-inline-end:66px}
+#quick-add-root.calendar-add{left:auto;right:var(--calendar-add-right);top:var(--calendar-add-top);bottom:auto;transform:none}
+.calendar-add .floating-add{width:44px;height:44px;min-width:44px;padding:0}
+.calendar-add .fab-label,.calendar-add .fab-shortcut{display:none}
+
 /* Language controls and logical layout. Motion/canvas coordinates stay physical. */
 html{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans",sans-serif}
 html:not(:lang(ko)) body{word-break:normal;overflow-wrap:break-word}

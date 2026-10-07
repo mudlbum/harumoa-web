@@ -1,7 +1,7 @@
 /* Only cache public app assets. Never cache authenticated responses, maps, or personal files. */
 // Scope isolates different project sites hosted on the same github.io origin.
 const PREFIX='harumoa-shell-'+encodeURIComponent(self.registration.scope)+'-';
-const CACHE=PREFIX+'v0926-web1';const ASSETS=['./','./index.html','./app.css','./app.js','./config.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./audio/click.wav','./audio/notification.wav','./audio/success.wav'];
+const CACHE=PREFIX+'v0927-web1';const ASSETS=['./','./index.html','./app.css','./app.js','./config.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./audio/click.wav','./audio/notification.wav','./audio/success.wav'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(x=>x.startsWith(PREFIX)&&x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{const req=event.request,url=new URL(req.url);if(req.method!=='GET'||url.origin!==self.location.origin||url.search||req.headers.has('Authorization')||!ASSETS.some(p=>new URL(p,self.registration.scope).pathname===url.pathname))return;event.respondWith(fetch(req).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(req,copy));}return r;}).catch(()=>caches.open(CACHE).then(c=>c.match(req))));});
