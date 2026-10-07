@@ -220,13 +220,14 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
             recordingURL = url
             let recorder = try AVAudioRecorder(url: url, settings: [AVFormatIDKey: kAudioFormatMPEG4AAC, AVSampleRateKey: 44100, AVNumberOfChannelsKey: 1, AVEncoderBitRateKey: 96000])
             recorder.delegate = self; recorder.isMeteringEnabled = true
-            guard recorder.prepareToRecord(), recorder.record(forDuration: 300) else { throw URLError(.cannotCreateFile) }
+            guard recorder.prepareToRecord(), recorder.record(forDuration: 180) else { throw URLError(.cannotCreateFile) }
             self.recorder = recorder
             event("harumoa:recording", ["requestId": id, "phase": "recording", "seconds": 0, "level": 0])
             meter = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
                 guard let self, let recorder = self.recorder, let id = self.recordingID else { return }
                 recorder.updateMeters()
-                self.event("harumoa:recording", ["requestId": id, "phase": "recording", "seconds": Int(recorder.currentTime), "level": pow(10, recorder.averagePower(forChannel: 0) / 20)])
+                let level = pow(10, recorder.averagePower(forChannel: 0) / 20)
+                self.event("harumoa:recording", ["requestId": id, "phase": "recording", "seconds": Int(recorder.currentTime), "level": level.isFinite ? max(0, min(1, level)) : 0])
             }
         } catch { cancelRecording(error: "녹음을 시작하지 못했어요. 다시 시도해 주세요. / Could not start recording. Retry.") }
     }
