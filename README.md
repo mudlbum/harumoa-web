@@ -10,7 +10,9 @@ Android v0.9.27와 같은 데이터 모델을 사용하는 PC·모바일 브라�
 
 공개 문의 담당자는 Jaiven Lee이며 이메일은 mudlbum@gmail.com입니다. 이 페이지는 현재 시험 버전의 처리와 제한을 설명합니다. Google OAuth 공개 심사와 스토어 배포는 아직 완료되지 않았습니다. 첫 출시 대상은 한국·미국·캐나다의 만8세 이상입니다. 기본 기능은 무료이고 Android Pro 광고 제거는 판매 전입니다. 현재 웹과 APK에는 광고가 없습니다. 만8–13세의 Google·공유·민감 기능은 실제 보호자 동의 확인 절차가 준비될 때까지 제한하며, 만8세 미만의 저장·연결은 막습니다. 이 제한을 검증된 보호자 동의 완료로 표시하지 않습니다.
 
-**Android 가족 테스트:** [v0.9.27 APK 내려받기](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.27/harumoa-v0.9.27-calendar-widgets-test.apk) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.27) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.27/harumoa-family-test-v0.9.27-ko.md)
+**Android 가족 테스트:** [v0.9.27 APK 바로 내려받기](https://mudlbum.github.io/harumoa-web/downloads/harumoa-v0.9.27.apk) · [다운로드 안내 페이지](https://mudlbum.github.io/harumoa-web/download.html) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.27) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.27/harumoa-family-test-v0.9.27-ko.md)
+
+Pages 배포는 공개 릴리스 APK를 받아 고정한 SHA-256을 확인한 뒤 `downloads/`에서 제공합니다. APK는 Git 저장소에 커밋하지 않습니다. 다음 Android 버전 배포 시 `deploy/web/pages.yml`의 파일 주소·버전·체크섬과 다운로드 안내를 함께 갱신합니다.
 
 캘린더의 빈 영역이나 일정 위에서 빠르게 좌우로 밀면 옆 메뉴로 이동합니다. 일정을 길게 누른 뒤 날짜로 옮기면 저장됩니다. 월간은 설명을 제거하고 화면 높이에 맞췄으며, + 버튼은 캘린더 상단의 작은 원형 버튼으로 표시합니다. 여러 일정이 있는 날짜는 +숫자 또는 날짜를 눌러 일간에서 모두 확인합니다.
 

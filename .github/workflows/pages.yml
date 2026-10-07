@@ -23,6 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/configure-pages@v5
+      - name: Prepare verified Android download
+        run: |
+          mkdir -p site/downloads
+          curl --fail --location --retry 3 --max-time 60 https://github.com/mudlbum/harumoa-web/releases/download/v0.9.27/harumoa-v0.9.27-calendar-widgets-test.apk --output site/downloads/harumoa-v0.9.27.apk
+          printf '%s  %s\n' '83120401890a443f3404791585c1f660d58d2e3e1cb02eea6b77eeda27efae42' 'harumoa-v0.9.27.apk' > site/downloads/SHA256SUMS.txt
+          (cd site/downloads && sha256sum --check SHA256SUMS.txt)
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site
