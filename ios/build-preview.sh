@@ -27,7 +27,7 @@ out=Path('ios-output'); app=out/'Harumoa.xcarchive/Products/Applications/Harumoa
 with (app/'Info.plist').open('rb') as f: info=plistlib.load(f)
 assert info['CFBundleIdentifier']=='com.harumoa.app.iostest'
 assert not (app/'embedded.mobileprovision').exists(), 'Preview must not contain a provisioning profile'
-ipa=out/'harumoa-v0.9.25-ios-UNSIGNED.ipa'
+ipa=out/f"harumoa-v{info['CFBundleShortVersionString']}-ios-UNSIGNED.ipa"
 with zipfile.ZipFile(ipa,'w',zipfile.ZIP_DEFLATED) as z:
     for p in sorted(app.rglob('*')):
         if p.is_file(): z.write(p, 'Payload/Harumoa.app/'+p.relative_to(app).as_posix())

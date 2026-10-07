@@ -2,7 +2,7 @@
 
 iOS 빌드용 프로젝트는 [ios/README-ko.md](ios/README-ko.md)에 있습니다. 현재 컴파일 확인용 IPA는 **Apple 서명이 없어 아이폰에 직접 설치할 수 없습니다.** 설치에는 Apple 서명/기기 등록 또는 TestFlight 준비가 필요합니다. iOS Google 로그인 등록과 가족 파일 선택은 별도 대기 상태입니다.
 
-Android v0.9.25와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
+Android v0.9.26와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 
@@ -10,11 +10,13 @@ Android v0.9.25와 같은 데이터 모델을 사용하는 PC·모바일 브라�
 
 공개 문의 담당자는 Jaiven Lee이며 이메일은 mudlbum@gmail.com입니다. 이 페이지는 현재 시험 버전의 처리와 제한을 설명합니다. Google OAuth 공개 심사와 스토어 배포는 아직 완료되지 않았습니다. 첫 출시 대상은 한국·미국·캐나다의 만8세 이상입니다. 기본 기능은 무료이고 Android Pro 광고 제거는 판매 전입니다. 현재 웹과 APK에는 광고가 없습니다. 만8–13세의 Google·공유·민감 기능은 실제 보호자 동의 확인 절차가 준비될 때까지 제한하며, 만8세 미만의 저장·연결은 막습니다. 이 제한을 검증된 보호자 동의 완료로 표시하지 않습니다.
 
-**Android 가족 테스트:** [v0.9.25 APK 내려받기](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.25/harumoa-v0.9.25-durable-drafts-test.apk) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.25) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.25/harumoa-family-test-ko.md)
+**Android 가족 테스트:** [v0.9.26 APK 내려받기](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.26/harumoa-v0.9.26-calendar-touch-test.apk) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.26) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.26/harumoa-family-test-v0.9.26-ko.md)
 
 웹 주소와 APK 링크를 가족에게 공유할 수 있습니다. Google 설정 없이 화면을 볼 때는 **로그인 없이 기능 체험**을 선택합니다. 실제 Google 저장에는 등록된 테스트 계정을 사용하며, 새 참여자의 Google 이메일은 개발자에게 알려 주세요. 테스터가 Cloud 프로젝트나 OAuth 클라이언트를 만들 필요는 없습니다. 웹 체험과 직접 받은 APK 설치는 Google Play 비공개 테스트의 참여 기록에 포함되지 않습니다.
 
 이 저장소는 GitHub Actions로 Pages에 배포합니다. GitHub Desktop에서 `main`의 변경을 커밋하고 **Push origin**을 누르면 같은 주소로 자동 업데이트됩니다. Actions의 **Deploy Harumoa web**가 성공하면 배포가 완료됩니다. 현재 배포 주소의 Google JavaScript origin은 기존 앱과 같은 웹 OAuth 클라이언트에 등록했습니다.
+
+숫자 순서는 입력창에서 위아래로 드래그해 고릅니다. 캘린더에서 짧게 누르면 수정창이 열리고, 길게 누른 뒤 드래그하면 이동합니다. 주간·일간 시간표에서는 선택한 일정의 위아래 손잡이로 시작·종료 시간을 조절합니다.
 
 ## 사용
 
