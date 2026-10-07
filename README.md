@@ -1,14 +1,14 @@
 # 하루모아 PC 웹
 
-Android v0.9.22와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
+Android v0.9.23와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 
 **앱 안내:** [소개](https://mudlbum.github.io/harumoa-web/welcome.html) · [개인정보](https://mudlbum.github.io/harumoa-web/privacy.html) · [문의](https://mudlbum.github.io/harumoa-web/support.html) · [데이터 삭제](https://mudlbum.github.io/harumoa-web/delete.html) · [이용 안내](https://mudlbum.github.io/harumoa-web/terms.html)
 
-공개 문의 담당자는 Jaiven Lee이며 이메일은 mudlbum@gmail.com입니다. 이 페이지는 현재 시험 버전의 처리와 제한을 설명합니다. Google OAuth 공개 심사와 스토어 배포는 아직 완료되지 않았습니다. 13세 미만을 포함하는 운영 출시에는 보호자 동의·연령별 제어·SDK 적합성 검증이 남아 있습니다. 현재 앱이 그 보호 절차를 갖추었다고 표시하지 않습니다.
+공개 문의 담당자는 Jaiven Lee이며 이메일은 mudlbum@gmail.com입니다. 이 페이지는 현재 시험 버전의 처리와 제한을 설명합니다. Google OAuth 공개 심사와 스토어 배포는 아직 완료되지 않았습니다. 첫 출시 대상은 한국·미국·캐나다의 만8세 이상입니다. 기본 기능은 무료이고 Android Pro 광고 제거는 판매 전입니다. 현재 웹과 APK에는 광고가 없습니다. 만8–13세의 Google·공유·민감 기능은 실제 보호자 동의 확인 절차가 준비될 때까지 제한하며, 만8세 미만의 저장·연결은 막습니다. 이 제한을 검증된 보호자 동의 완료로 표시하지 않습니다.
 
-**Android 가족 테스트:** [v0.9.22 APK 내려받기](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.22/harumoa-v0.9.22-stable-composer-test.apk) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.22) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.22/harumoa-family-test-ko.md)
+**Android 가족 테스트:** [v0.9.23 APK 내려받기](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.23/harumoa-v0.9.23-family-picker-test.apk) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.23) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.23/harumoa-family-test-ko.md)
 
 웹 주소와 APK 링크를 가족에게 공유할 수 있습니다. Google 설정 없이 화면을 볼 때는 **로그인 없이 기능 체험**을 선택합니다. 실제 Google 저장에는 등록된 테스트 계정을 사용하며, 새 참여자의 Google 이메일은 개발자에게 알려 주세요. 테스터가 Cloud 프로젝트나 OAuth 클라이언트를 만들 필요는 없습니다. 웹 체험과 직접 받은 APK 설치는 Google Play 비공개 테스트의 참여 기록에 포함되지 않습니다.
 
@@ -27,7 +27,7 @@ Android v0.9.22와 같은 데이터 모델을 사용하는 PC·모바일 브라�
 1. 저장소 Settings → Pages → Build and deployment에서 **GitHub Actions**를 선택합니다.
 2. Actions → **Deploy Harumoa web**를 실행합니다. 이후 `main`에 변경을 올리면 자동 배포합니다.
 3. 앱과 같은 Google Cloud 프로젝트의 기존 **웹 OAuth 클라이언트**에서 Authorized JavaScript origins에 사이트의 origin을 추가합니다. 예를 들어 `https://mudlbum.github.io`를 넣으며 `/harumoa-web/` 경로는 넣지 않습니다. 다른 클라이언트·프로젝트로 바꾸면 기존 파일 접근과 검색이 달라질 수 있습니다.
-4. 해당 프로젝트의 Drive API·Sheets API 사용 설정을 확인합니다. Calendar 기능을 연결할 때에는 Calendar API와 별도 동의가 필요합니다. OAuth가 테스트 상태라면 사용할 계정을 테스트 사용자로 등록해야 합니다.
+4. 해당 프로젝트의 Drive API·Sheets API 사용 설정을 확인합니다. 브라우저 가족 초대는 공식 Google Picker로 초대된 파일 한 개를 승인합니다. Picker API 및 별도 브라우저 키 설정은 현재 개발자가 승인 대기 중이며, 활성화 전에는 새 브라우저 가족 연결이 불가합니다. 전체 Sheets 권한 대체 경로는 제거했습니다. Calendar 기능을 연결할 때에는 Calendar API와 별도 동의가 필요합니다. OAuth가 테스트 상태라면 사용할 계정을 테스트 사용자로 등록해야 합니다.
 
 `site/config.js`의 웹 클라이언트 ID는 공개 설정입니다. 클라이언트 비밀키, 서비스 계정 JSON, 접근 토큰을 넣지 않습니다. Android 제한 API 키는 웹에 복사하지 않습니다. 정적 Pages 배포에는 서버가 필요하지 않습니다.
 
