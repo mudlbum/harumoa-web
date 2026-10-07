@@ -58,4 +58,13 @@ final class HarumoaTests: XCTestCase {
         XCTAssertGreaterThan(fields["bytes"] as? Int ?? 0, 0)
         XCTAssertTrue((fields["url"] as? String ?? "").hasPrefix("harumoa://localhost/recordings/"))
     }
+    func testNativePermissionDenialKeepsRetry() async throws {
+        try await wait("typeof HarumoaRecorder === 'object'")
+        let result = try await shell.web.callAsyncJavaScript("const id=crypto.randomUUID();return await new Promise((ok,no)=>{const timer=setTimeout(()=>no(new Error('denial timed out')),8000);const listener=e=>{if(e.detail.requestId!==id)return;clearTimeout(timer);window.removeEventListener('harumoa:recording',listener);ok(e.detail)};window.addEventListener('harumoa:recording',listener);HarumoaRecorder.start(id)});", arguments: [:], in: nil, contentWorld: .page)
+        let fields = try XCTUnwrap(result as? [String: Any])
+        XCTAssertEqual(fields["phase"] as? String, "error")
+        XCTAssertEqual(fields["code"] as? String, "MIC_PERMISSION")
+        XCTAssertNil(shell.recordingID)
+        XCTAssertNil(shell.recorder)
+    }
 }

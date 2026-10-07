@@ -27,6 +27,12 @@
     tap: (sound, haptic, volume) => send('tap', [sound, haptic, volume]),
     success: (sound, volume) => send('success', [sound, volume]), stop: () => send('stopFeedback')
   };
-  window.HarumoaNative = {shareInvitation: text => send('shareInvitation', [text]), pickContact: () => send('pickContact')};
+  window.HarumoaNative = {
+    shareInvitation: text => send('shareInvitation', [text]), pickContact: () => send('pickContact'),
+    requestPermission: kind => {
+      if (kind === 'microphone') return send('requestPermission', [kind]);
+      throw new Error('iOS 미리보기에서는 백그라운드 알림·기상 알람을 아직 지원하지 않습니다. / Background reminders and wake alarms are not supported in this iOS preview.');
+    }
+  };
   // A custom WKWebView scheme has no web service worker. Native bundle works offline.
 })();

@@ -171,6 +171,7 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
         case "recordCancel": if string(0) == recordingID { cancelRecording() }
         case "recordDiscard": assets.discard(string(0))
         case "openSettings": if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+        case "requestPermission": if string(0) == "microphone", let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
         case "shareInvitation":
             let text = string(0)
             guard text.utf8.count <= 12000, !text.isEmpty else { return }
@@ -203,7 +204,7 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
         AVAudioApplication.requestRecordPermission { [weak self] granted in
             DispatchQueue.main.async {
                 guard let self, self.recordingID == id else { return }
-                guard granted else { self.cancelRecording(error: "마이크 권한을 허용한 뒤 다시 눌러 주세요. / Allow the microphone and retry."); return }
+                guard granted else { self.cancelRecording(error: "마이크 권한을 허용한 뒤 다시 눌러 주세요. / Allow the microphone and retry.", code: "MIC_PERMISSION"); return }
                 self.permissionReady = true
                 if UIApplication.shared.applicationState == .active { self.beginRecording() }
             }
@@ -243,14 +244,14 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
         let token = UUID().uuidString.lowercased(); assets.recordings[token] = file
         event("harumoa:recording", ["requestId": id, "phase": "finished", "token": token, "mime": "audio/mp4", "url": "harumoa://localhost/recordings/" + token])
     }
-    func cancelRecording(error: String? = nil) {
+    func cancelRecording(error: String? = nil, code: String = "RECORDING_FAILED") {
         let id = recordingID
         recordingID = nil; permissionReady = false; meter?.invalidate(); meter = nil
         recorder?.stop(); recorder = nil
         if let file = recordingURL { try? FileManager.default.removeItem(at: file) }
         recordingURL = nil
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-        if let id { event("harumoa:recording", ["requestId": id, "phase": error == nil ? "cancelled" : "error", "message": error ?? ""]) }
+        if let id { event("harumoa:recording", ["requestId": id, "phase": error == nil ? "cancelled" : "error", "code": code, "message": error ?? ""]) }
     }
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         guard recordingID != nil else { return }

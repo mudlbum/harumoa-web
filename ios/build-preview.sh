@@ -9,11 +9,15 @@ xcrun simctl boot "$device"
 xcrun simctl bootstatus "$device" -b
 xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO build-for-testing CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios-output/simulator-build.log
 xcrun simctl install "$device" ios-derived/Build/Products/Debug-iphonesimulator/Harumoa.app
+xcrun simctl privacy "$device" revoke microphone com.harumoa.app.iostest
+xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO -only-testing:HarumoaTests/HarumoaTests/testNativePermissionDenialKeepsRetry -resultBundlePath ios-output/denial.xcresult test-without-building CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios-output/permission-denial.log
 xcrun simctl privacy "$device" grant microphone com.harumoa.app.iostest
-xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO -resultBundlePath ios-output/tests.xcresult test-without-building CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios-output/simulator-test.log
+xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO -skip-testing:HarumoaTests/HarumoaTests/testNativePermissionDenialKeepsRetry -resultBundlePath ios-output/tests.xcresult test-without-building CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios-output/simulator-test.log
 xcrun simctl launch "$device" com.harumoa.app.iostest
 xcrun simctl io "$device" screenshot ios-output/ios-simulator.png
 xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Release -destination 'generic/platform=iOS' -archivePath ios-output/Harumoa.xcarchive archive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee ios-output/device-build.log
+codesign --display --verbose=4 ios-output/Harumoa.xcarchive/Products/Applications/Harumoa.app > ios-output/signature.txt 2>&1 || true
+file ios-output/Harumoa.xcarchive/Products/Applications/Harumoa.app/Harumoa > ios-output/device-binary.txt
 python3 - <<'PY'
 from pathlib import Path
 import hashlib, json, plistlib, zipfile
