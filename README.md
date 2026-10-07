@@ -4,6 +4,10 @@ Android v0.9.22와 같은 데이터 모델을 사용하는 PC·모바일 브라�
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 
+**앱 안내:** [소개](https://mudlbum.github.io/harumoa-web/welcome.html) · [개인정보](https://mudlbum.github.io/harumoa-web/privacy.html) · [문의](https://mudlbum.github.io/harumoa-web/support.html) · [데이터 삭제](https://mudlbum.github.io/harumoa-web/delete.html) · [이용 안내](https://mudlbum.github.io/harumoa-web/terms.html)
+
+공개 문의 담당자는 Jaiven Lee이며 이메일은 mudlbum@gmail.com입니다. 이 페이지는 현재 시험 버전의 처리와 제한을 설명합니다. Google OAuth 공개 심사와 스토어 배포는 아직 완료되지 않았습니다. 13세 미만을 포함하는 운영 출시에는 보호자 동의·연령별 제어·SDK 적합성 검증이 남아 있습니다. 현재 앱이 그 보호 절차를 갖추었다고 표시하지 않습니다.
+
 **Android 가족 테스트:** [v0.9.22 APK 내려받기](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.22/harumoa-v0.9.22-stable-composer-test.apk) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.22) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.22/harumoa-family-test-ko.md)
 
 웹 주소와 APK 링크를 가족에게 공유할 수 있습니다. Google 설정 없이 화면을 볼 때는 **로그인 없이 기능 체험**을 선택합니다. 실제 Google 저장에는 등록된 테스트 계정을 사용하며, 새 참여자의 Google 이메일은 개발자에게 알려 주세요. 테스터가 Cloud 프로젝트나 OAuth 클라이언트를 만들 필요는 없습니다. 웹 체험과 직접 받은 APK 설치는 Google Play 비공개 테스트의 참여 기록에 포함되지 않습니다.
