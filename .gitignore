@@ -6,3 +6,10 @@ config.public.json
 *.apk
 *.aab
 node_modules/
+*.ipa
+*.p12
+*.p8
+*.mobileprovision
+*.xcarchive/
+ios-derived/
+ios-output/

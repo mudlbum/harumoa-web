@@ -1,5 +1,7 @@
 # 하루모아 PC 웹
 
+iOS 빌드용 프로젝트는 [ios/README-ko.md](ios/README-ko.md)에 있습니다. 현재 컴파일 확인용 IPA는 **Apple 서명이 없어 아이폰에 직접 설치할 수 없습니다.** 설치에는 Apple 서명/기기 등록 또는 TestFlight 준비가 필요합니다. iOS Google 로그인 등록과 가족 파일 선택은 별도 대기 상태입니다.
+
 Android v0.9.25와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)

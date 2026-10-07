@@ -1,0 +1,28 @@
+name: Build Harumoa iOS preview
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compile and test iOS bundle
+        run: bash ios/build-preview.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: harumoa-ios-v0.9.25-unsigned
+          path: |
+            ios-output/*.ipa
+            ios-output/*.txt
+            ios-output/*.json
+            ios-output/*.log
+            ios-output/*.png
+          if-no-files-found: error
+          retention-days: 14
