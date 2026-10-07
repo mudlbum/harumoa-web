@@ -1,6 +1,6 @@
 # 하루모아 PC 웹
 
-Android v0.9.21와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
+Android v0.9.22와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 

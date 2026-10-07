@@ -3600,7 +3600,7 @@ function showDialog(title, body, footer = '', meta = {}) {
   if (meta.kind === 'journal') HM7.mountJournalExtras(dialog, meta.row || {});
   HML.prepareContent(dialog);
   if (!dialog.open) dialog.showModal();
-  openEditor(dialog);
+  if (!meta.creation || !creation?.switching) openEditor(dialog);
   draftBaseline = draftValue();
   if (meta.creation) creation?.mount(dialog, meta.kind);
   const first = dialog.querySelector('[autofocus]') || dialog.querySelector('input:not([type=hidden]),select,textarea');
@@ -3809,8 +3809,10 @@ class CreationPicker {
       composer.setKind(kind, { animate: false }); this.kind = kind; this.updateTabs();
     } else {
       this.remember(); this.switching = true;
-      if (this.host === composer.dialog) composer.close({ immediate: true }); else closeDialog(true);
-      this.switching = false; this.open({ kind });
+      try {
+        if (this.host === composer.dialog) composer.close({ immediate: true }); else closeDialog(true);
+        this.open({ kind });
+      } finally { this.switching = false; }
     }
     if (focusTab) this.host?.querySelector(`[data-create-kind="${kind}"]`)?.focus({ preventScroll: true });
     else this.host?.querySelector('[autofocus],input[name=title]')?.focus({ preventScroll: true });

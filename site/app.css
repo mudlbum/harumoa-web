@@ -434,13 +434,13 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 .creation-swipe button:disabled{opacity:.3;cursor:default}
 .creation-pane .composer-head,.creation-pane .dialog-head,.creation-pane .dialog-body,.creation-pane .composer-scroll{touch-action:pan-y}
 .creation-pane .kind-switch{display:none}
-#editor.creation-pane[open]{display:flex;flex-direction:column;position:fixed;top:calc(var(--hm-visual-top,0px) + 12px);bottom:auto;left:0;right:0;margin:0 auto;max-height:calc(var(--hm-visual-height,100dvh) - 24px);overflow:hidden}
+#editor.creation-pane[open]{display:flex;flex-direction:column;position:fixed;top:calc(var(--hm-visual-top,0px) + 12px);bottom:auto;left:var(--shell-rail);right:0;margin:0 auto;width:550px;max-width:calc(100vw - var(--shell-rail) - 36px);max-height:calc(var(--hm-visual-height,100dvh) - 24px);overflow:hidden}
 #editor.creation-pane>.dialog-head{flex:none;position:static}
 #editor.creation-pane>form{display:flex;flex-direction:column;min-height:0;overflow:hidden}
 #editor.creation-pane .dialog-body{overflow-y:auto;overscroll-behavior:contain;min-height:0}
 #editor.creation-pane .dialog-foot{flex:none;position:static}
 #composer .creation-picker{padding-left:26px;padding-right:26px}
-@media(max-width:760px){#composer .creation-picker{padding-left:21px;padding-right:21px}.creation-picker{padding-left:19px;padding-right:19px}}
+@media(max-width:760px){#editor.creation-pane[open]{width:calc(100vw - 24px);max-width:550px}#composer .creation-picker{padding-left:21px;padding-right:21px}.creation-picker{padding-left:19px;padding-right:19px}}
 @media(max-width:390px){#composer .creation-picker{padding-left:16px;padding-right:16px}.creation-picker{padding-left:14px;padding-right:14px}.creation-types button{padding:8px 10px}}
 @media(max-height:500px){.creation-picker{padding-bottom:3px}.creation-swipe{display:none}.creation-pane .dialog-head{padding-top:10px;padding-bottom:10px}.creation-types{padding-top:0;padding-bottom:3px}}
 .composer-morph-surface{position:absolute;inset:0;transform-origin:0 0;pointer-events:none;z-index:0;box-shadow:0 18px 50px #163d3430}
