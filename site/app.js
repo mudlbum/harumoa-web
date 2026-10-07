@@ -2282,15 +2282,9 @@ function select(name, values, selected, more = '') { return HML.html`<select nam
 
 function priorityControls(a = {}) {
   const { PRIORITIES, priorityRank } = __modules["src/lib/domain.js"];
-  return HML.html`<fieldset class="task-priority-controls"><legend class="sr-only">우선순위와 같은 등급 안의 순서</legend><div class="priority-levels" role="radiogroup" aria-label="우선순위">${Object.entries(PRIORITIES).map(([key, p]) => HML.html`<label class="priority-level priority-${key}" title="${p.code} · ${p.label}"><input type="radio" name="difficulty" value="${key}" ${key === (a.difficulty || 'normal') ? 'checked' : ''} aria-label="${p.code} · ${p.label} 우선순위"><span>${p.code}</span></label>`).join('')}</div><label class="priority-rank-control"><span>순서 <output>${priorityRank(a)}</output><small>1~9</small></span><input type="range" name="priority_rank" min="1" max="9" step="1" value="${priorityRank(a)}" aria-label="같은 우선순위 안의 순서"></label></fieldset>`;
+  return HML.html`<fieldset class="task-priority-controls"><legend class="sr-only">우선순위와 같은 등급 안의 순서</legend><div class="priority-levels" role="radiogroup" aria-label="우선순위">${Object.entries(PRIORITIES).map(([key, p]) => HML.html`<label class="priority-level priority-${key}" title="${p.code} · ${p.label}"><input type="radio" name="difficulty" value="${key}" ${key === (a.difficulty || 'normal') ? 'checked' : ''} aria-label="${p.code} · ${p.label} 우선순위"><span>${p.code}</span></label>`).join('')}</div><label class="priority-rank-control"><span>순서</span>${select('priority_rank', Object.fromEntries(Array.from({length:9}, (_,i) => [i+1,i+1])), priorityRank(a), HML.markup("aria-label=\"같은 우선순위 안의 순서\""))}</label></fieldset>`;
 }
-function updatePriorityRank(el) {
-  if (el.name !== 'priority_rank') return;
-  const output = el.closest('.priority-rank-control')?.querySelector('output');
-  if (output) output.textContent = el.value;
-  el.setAttribute('aria-valuetext', `${el.value} / 9`);
-}
-return {icon,tone,logo,avatar,ring,bar,pill,empty,btn,field,input,options,select,priorityControls,updatePriorityRank};
+return {icon,tone,logo,avatar,ring,bar,pill,empty,btn,field,input,options,select,priorityControls};
 })();
 
 __modules["src/lib/motion.js"]=(()=>{
@@ -2894,7 +2888,7 @@ return {swipeIntent,commitSwipe,edgeResistance,adjacentRoute,PageNavigator};
 
 __modules["src/components/composer.js"]=(()=>{
 const {escapeHTML: e, validateActivity, duration}=__modules["src/lib/domain.js"];
-const {icon, avatar, field, input, select, priorityControls, updatePriorityRank}=__modules["src/components/ui.js"];
+const {icon, avatar, field, input, select, priorityControls}=__modules["src/components/ui.js"];
 const {spring, play, finished, reducedMotion}=__modules["src/lib/motion.js"];
 
 // Lives outside #app so polling, navigation and sync never replace an open draft.
@@ -2931,7 +2925,7 @@ class ActivityComposer {
       if (event.target.name === 'difficulty') this.updateCopy();
       if (event.target.name === 'goal_id') this.updateGoal();
     });
-    this.dialog.addEventListener('input', event => { updatePriorityRank(event.target); this.error(''); this.updateDraftStatus(); });
+    this.dialog.addEventListener('input', () => { this.error(''); this.updateDraftStatus(); });
     this.dialog.addEventListener('keydown', event => {
       if (event.key === 'Tab') {
         const controls = [...this.dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex]:not([tabindex="-1"])')].filter(el => !el.closest('[inert],[hidden]') && el.getClientRects().length && (el.type !== 'radio' || el.checked));
@@ -3561,7 +3555,7 @@ const Feedback = __modules["src/lib/feedback.js"];
 const {escapeHTML: e, today, addDays, shortDate, uid, walletAvailable, friendlyError, validateActivity, duration, DIFFICULTIES, JOURNAL_KINDS, MOODS}=__modules["src/lib/domain.js"];
 const {DemoGateway}=__modules["src/lib/demo.js"];
 const {CloudGateway}=__modules["src/lib/cloud.js"];
-const {icon, logo, avatar, pill, btn, field, input, select, options, bar, priorityControls, updatePriorityRank}=__modules["src/components/ui.js"];
+const {icon, logo, avatar, pill, btn, field, input, select, options, bar, priorityControls}=__modules["src/components/ui.js"];
 const {appView, authView, onboardingView, syncLabel, NAV}=__modules["src/views.js"];
 const {ActivityComposer}=__modules["src/components/composer.js"];
 const {captureLayout, animateLayout, openEditor, play, finished, reducedMotion, installPressMotion}=__modules["src/lib/motion.js"];
@@ -4093,7 +4087,6 @@ document.addEventListener('click', event => {
 });
 document.addEventListener('input', event => { if (event.target.id === 'task-search') { s.search = event.target.value; render({ quiet: true }); } });
 document.addEventListener('input', event => {
-  updatePriorityRank(event.target);
   if (event.target.id === 'feedback-volume') {
     const output = document.getElementById('feedback-volume-value');
     if (output) output.textContent = `${event.target.value}%`;

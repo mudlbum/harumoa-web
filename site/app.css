@@ -447,7 +447,7 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 #composer.is-morphing{background:transparent;border-color:transparent;box-shadow:none;overflow:visible}
 #composer .composer-form{position:relative;z-index:1}
 /* Compact task priority controls remain beside Save and above the keyboard. */
-.task-priority-controls{border:0;padding:0;margin:0;display:flex;align-items:center;gap:10px;min-width:0}
+.task-priority-controls{border:0;padding:0;margin:0;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .task-priority-controls[hidden]{display:none}
 .priority-levels{display:flex;gap:2px;padding:3px;border-radius:11px;background:#e9eee9;flex-shrink:0}
 .priority-level{position:relative;display:block;cursor:pointer}
@@ -456,13 +456,11 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 .priority-level input:checked+span{background:#fff;color:#28675a;box-shadow:0 1px 4px #264a3b16}
 .priority-focus input:checked+span{color:#985b44}.priority-easy input:checked+span{color:#637ca0}
 .priority-level input:focus-visible+span{outline:2px solid #28675a;outline-offset:2px}
-.priority-rank-control{width:72px;display:flex;flex-direction:column;gap:0;flex-shrink:0;cursor:pointer}
-.priority-rank-control>span{display:flex;align-items:baseline;gap:4px;color:#617468;font-size:10px}
-.priority-rank-control output{font-size:18px;font-weight:750;color:#285f51;font-variant-numeric:tabular-nums}
-.priority-rank-control small{font-size:9px;margin-left:auto}
-.priority-rank-control input{width:100%;height:25px;min-height:25px;padding:0;margin:0;accent-color:#28675a;touch-action:pan-y}
-#composer .composer-foot{gap:10px;padding:12px 16px 15px}
-#composer .composer-submit{min-width:112px;gap:6px;padding:0 12px}
+.priority-rank-control{width:54px;display:flex;flex-direction:column;gap:2px;flex-shrink:0;cursor:pointer}
+.priority-rank-control>span{color:#617468;font-size:10px}
+.priority-rank-control select{width:100%;min-height:44px;padding:0 5px;border:1px solid #c9d8cf;border-radius:9px;background:#fff;color:#285f51;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+#composer .composer-foot{gap:10px;padding:12px 16px 15px;flex-wrap:wrap}
+#composer .composer-submit{min-width:112px;gap:6px;padding:0 12px;margin-inline-start:auto}
 #composer[data-kind=event] .composer-foot{justify-content:flex-end}
 .composer-draft-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0 12px}
 .task-title-line{display:flex;align-items:center;gap:7px;min-width:0}
@@ -474,7 +472,7 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 .hm-priority-points{display:flex;gap:8px;flex-wrap:wrap}.hm-priority-points>span{padding:8px 12px;border-radius:9px;background:#eef3eb;font-size:14px}.hm-priority-points b{margin-right:6px}
 .hm-about{display:flex;align-items:center;gap:12px}.hm-about-versions{margin:16px 0 0}.hm-about-versions>div{display:flex;justify-content:space-between;gap:16px;padding:9px 0}.hm-about-versions dt{color:#617468}.hm-about-versions dd{margin:0;font-variant-numeric:tabular-nums}
 .hm-about img.approved-logo{width:56px;height:56px}.composer-time-help{font-size:11px;color:#617468;line-height:1.6;margin:-8px 0 14px}#composer[data-kind=event] .composer-time-help{display:none}
-@media(max-width:350px){#composer .composer-foot{padding-left:12px;padding-right:12px;gap:7px}.task-priority-controls{gap:7px}.priority-level span{width:30px}.priority-rank-control{width:59px}#composer .composer-submit{min-width:102px;padding:0 9px;font-size:12px}#composer .composer-submit svg{width:15px}}
+@media(max-width:350px){#composer .composer-foot{padding-left:12px;padding-right:12px;gap:7px}.task-priority-controls{gap:7px}.priority-level span{width:30px}#composer .composer-submit{min-width:102px;padding:0 9px;font-size:12px}#composer .composer-submit svg{width:15px}}
 
 /* Language controls and logical layout. Motion/canvas coordinates stay physical. */
 html{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans",sans-serif}
