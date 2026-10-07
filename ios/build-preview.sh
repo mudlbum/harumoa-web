@@ -7,12 +7,14 @@ xcrun simctl list devices available --json > ios-output/simulators.json
 device=$(python3 -c 'import json;d=json.load(open("ios-output/simulators.json"));print(next(v["udid"] for devices in d["devices"].values() for v in devices if v.get("isAvailable") and "iPhone" in v["name"]))')
 xcrun simctl boot "$device"
 xcrun simctl bootstatus "$device" -b
-xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO build-for-testing CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios-output/simulator-build.log
+# Apple WebKit issue293831: Xcode16.4/iOS18.5 simulator overlay fails below18.4.
+# This test-only override leaves the device archive minimum at iOS17.
+xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO build-for-testing CODE_SIGNING_ALLOWED=NO IPHONEOS_DEPLOYMENT_TARGET=18.4 2>&1 | tee ios-output/simulator-build.log
 xcrun simctl install "$device" ios-derived/Build/Products/Debug-iphonesimulator/Harumoa.app
 xcrun simctl privacy "$device" revoke microphone com.harumoa.app.iostest
-xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO -only-testing:HarumoaTests/HarumoaTests/testNativePermissionDenialKeepsRetry -resultBundlePath ios-output/denial.xcresult test-without-building CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios-output/permission-denial.log
+xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO -only-testing:HarumoaTests/HarumoaTests/testNativePermissionDenialKeepsRetry -resultBundlePath ios-output/denial.xcresult test-without-building CODE_SIGNING_ALLOWED=NO IPHONEOS_DEPLOYMENT_TARGET=18.4 2>&1 | tee ios-output/permission-denial.log
 xcrun simctl privacy "$device" grant microphone com.harumoa.app.iostest
-xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO -skip-testing:HarumoaTests/HarumoaTests/testNativePermissionDenialKeepsRetry -resultBundlePath ios-output/tests.xcresult test-without-building CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios-output/simulator-test.log
+xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Debug -destination "platform=iOS Simulator,id=$device" -derivedDataPath ios-derived -parallel-testing-enabled NO -skip-testing:HarumoaTests/HarumoaTests/testNativePermissionDenialKeepsRetry -resultBundlePath ios-output/tests.xcresult test-without-building CODE_SIGNING_ALLOWED=NO IPHONEOS_DEPLOYMENT_TARGET=18.4 2>&1 | tee ios-output/simulator-test.log
 xcrun simctl launch "$device" com.harumoa.app.iostest
 xcrun simctl io "$device" screenshot ios-output/ios-simulator.png
 xcodebuild -project ios/Harumoa.xcodeproj -scheme Harumoa -configuration Release -destination 'generic/platform=iOS' -archivePath ios-output/Harumoa.xcarchive archive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee ios-output/device-build.log
