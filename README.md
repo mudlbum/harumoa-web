@@ -2,7 +2,7 @@
 
 iOS 빌드용 프로젝트는 [ios/README-ko.md](ios/README-ko.md)에 있습니다. 현재 컴파일 확인용 IPA는 **Apple 서명이 없어 아이폰에 직접 설치할 수 없습니다.** 설치에는 Apple 서명/기기 등록 또는 TestFlight 준비가 필요합니다. iOS Google 로그인 등록과 가족 파일 선택은 별도 대기 상태입니다.
 
-Android v0.9.27와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
+Android v0.9.28와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 
@@ -10,11 +10,11 @@ Android v0.9.27와 같은 데이터 모델을 사용하는 PC·모바일 브라�
 
 공개 문의 담당자는 Jaiven Lee이며 이메일은 mudlbum@gmail.com입니다. 이 페이지는 현재 시험 버전의 처리와 제한을 설명합니다. Google OAuth 공개 심사와 스토어 배포는 아직 완료되지 않았습니다. 첫 출시 대상은 한국·미국·캐나다의 만8세 이상입니다. 기본 기능은 무료이고 Android Pro 광고 제거는 판매 전입니다. 현재 웹과 APK에는 광고가 없습니다. 만8–13세의 Google·공유·민감 기능은 실제 보호자 동의 확인 절차가 준비될 때까지 제한하며, 만8세 미만의 저장·연결은 막습니다. 이 제한을 검증된 보호자 동의 완료로 표시하지 않습니다.
 
-**Android 가족 테스트:** [v0.9.27 APK 바로 내려받기](https://mudlbum.github.io/harumoa-web/downloads/harumoa-v0.9.27.apk) · [다운로드 안내 페이지](https://mudlbum.github.io/harumoa-web/download.html) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.27) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.27/harumoa-family-test-v0.9.27-ko.md)
+**Android 가족 테스트:** [v0.9.28 APK 바로 내려받기](https://mudlbum.github.io/harumoa-web/downloads/harumoa-v0.9.28.apk) · [다운로드 안내 페이지](https://mudlbum.github.io/harumoa-web/download.html) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.28) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.28/harumoa-family-test-v0.9.28-ko.md)
 
 Pages 배포는 공개 릴리스 APK를 받아 고정한 SHA-256을 확인한 뒤 `downloads/`에서 제공합니다. APK는 Git 저장소에 커밋하지 않습니다. 다음 Android 버전 배포 시 `deploy/web/pages.yml`의 파일 주소·버전·체크섬과 다운로드 안내를 함께 갱신합니다.
 
-캘린더의 빈 영역이나 일정 위에서 빠르게 좌우로 밀면 옆 메뉴로 이동합니다. 일정을 길게 누른 뒤 날짜로 옮기면 저장됩니다. 월간은 설명을 제거하고 화면 높이에 맞췄으며, + 버튼은 캘린더 상단의 작은 원형 버튼으로 표시합니다. 여러 일정이 있는 날짜는 +숫자 또는 날짜를 눌러 일간에서 모두 확인합니다.
+캘린더에서 왼쪽으로 밀면 월 → 주 → 일 → 목표 순서로 이동합니다. 주간에서는 먼저 오른쪽 끝까지 스크롤하고, 끝에서 새로 한 번 더 밀면 일간으로 넘어갑니다. 반대 방향은 일 → 주간 오른쪽 끝 → 주간 왼쪽 끝 → 월 → 오늘 순서입니다. 위로 밀면 다음 월·주·일, 아래로 밀면 이전 기간을 표시합니다. 시간표의 왼쪽 시간 열을 드래그하면 시간을 스크롤할 수 있습니다. 일정을 길게 누른 뒤 날짜로 옮기면 저장됩니다. 월간은 설명을 제거하고 화면 높이에 맞췄으며, + 버튼은 캘린더 상단의 작은 원형 버튼으로 표시합니다. 여러 일정이 있는 날짜는 +숫자 또는 날짜를 눌러 일간에서 모두 확인합니다.
 
 Android 홈 화면의 빈 곳을 길게 눌러 **위젯 → Harumoa → 캘린더 / 할 일**을 추가합니다. 캘린더는 가족 시간대의 이번 달과 일정 개수를, 할 일은 오늘 항목을 먼저 표시합니다. 날짜는 앱의 일간 보기로, 할 일은 기존 수정창으로 연결합니다. 저장 후 위젯이 갱신됩니다. 표시하는 데이터는 앱에서 마지막으로 저장·동기화한 내 일정과 할 일이며, 위젯 자체가 Google에 접속하지는 않습니다. 로그아웃하면 표시 내용을 지웁니다. iOS 홈 화면 위젯은 이번 버전에 포함하지 않았습니다.
 
