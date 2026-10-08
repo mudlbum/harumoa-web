@@ -193,6 +193,12 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
             if args[1] as? Bool == true { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
             if args[0] as? Bool == true { play("click", volume: args[2] as? Double ?? 0) }
         case "success": if args.count == 2, args[0] as? Bool == true { play("success", volume: args[1] as? Double ?? 0) }
+        case "spinTick":
+            // ponytail: UIKit supplies a light tick; use Core Haptics for a fixed 30ms iOS pulse.
+            guard args.count == 3, recorder == nil, UIApplication.shared.applicationState == .active else { return }
+            if args[1] as? Bool == true { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
+            if args[0] as? Bool == true { play("spin", volume: args[2] as? Double ?? 0) }
+        case "stopSpin": players["spin"]?.stop()
         case "stopFeedback": players.values.forEach { $0.stop() }
         default: break
         }
@@ -268,6 +274,7 @@ final class HarumoaViewController: UIViewController, WKNavigationDelegate, WKUID
     }
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) { cancelRecording(error: "Recording interrupted. Retry.") }
     @objc func background() {
+        web.evaluateJavaScript("window.Harumoa?.composer?.cancelSpin()", completionHandler: nil)
         cancelRecording(); players.values.forEach { $0.stop() }
         web.evaluateJavaScript("window.HMServices?.cleanup();", completionHandler: nil)
         for token in Array(assets.recordings.keys) { assets.discard(token) }

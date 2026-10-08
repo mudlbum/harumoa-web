@@ -26,8 +26,8 @@ jobs:
       - name: Prepare verified Android download
         run: |
           mkdir -p site/downloads
-          curl --fail --location --retry 3 --max-time 60 https://github.com/mudlbum/harumoa-web/releases/download/v0.9.31/harumoa-v0.9.31-calendar-button-test.apk --output site/downloads/harumoa-v0.9.31.apk
-          printf '%s  %s\n' 'eeb9b1405560d57ac7838dc9e84af32007cce24796aff046db51cb668e4da212' 'harumoa-v0.9.31.apk' > site/downloads/SHA256SUMS.txt
+          curl --fail --location --retry 3 --max-time 60 https://github.com/mudlbum/harumoa-web/releases/download/v0.9.32/harumoa-v0.9.32-fidget-spin-test.apk --output site/downloads/harumoa-v0.9.32.apk
+          printf '%s  %s\n' '2cac960525a8b80f7e4b9becba3170f022e323a5b89da5a096f5d84b9b66c207' 'harumoa-v0.9.32.apk' > site/downloads/SHA256SUMS.txt
           (cd site/downloads && sha256sum --check SHA256SUMS.txt)
       - uses: actions/upload-pages-artifact@v4
         with:

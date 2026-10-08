@@ -25,6 +25,7 @@
   };
   window.HarumoaFeedback = {
     tap: (sound, haptic, volume) => send('tap', [sound, haptic, volume]),
+    spinTick: (sound, haptic, volume) => send('spinTick', [sound, haptic, volume]), stopSpin: () => send('stopSpin'),
     success: (sound, volume) => send('success', [sound, volume]), stop: () => send('stopFeedback')
   };
   window.HarumoaNative = {
