@@ -532,10 +532,7 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 .calendar-main .calendar-scroller{touch-action:pinch-zoom}
 .calendar-time-head[data-cal-pan]{touch-action:pinch-zoom}
 
-.calendar-toolbar{padding-inline-end:66px}
-#quick-add-root.calendar-add{left:auto;right:var(--calendar-add-right);top:var(--calendar-add-top);bottom:auto;transform:none}
-.calendar-add .floating-add{width:44px;height:44px;min-width:44px;padding:0}
-.calendar-add .fab-label,.calendar-add .fab-shortcut{display:none}
+
 
 /* Language controls and logical layout. Motion/canvas coordinates stay physical. */
 html{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans",sans-serif}

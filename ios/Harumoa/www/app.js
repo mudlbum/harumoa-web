@@ -3720,13 +3720,12 @@ function positionCalendar(host,previous,{calendarOffset=null,calendarEdge=null}=
 }
 function fitMonthCalendar(container=root) {
   if(!(container instanceof Element))container=root;
-  const launch=document.querySelector('#quick-add-root'),toolbar=root.querySelector('#main .calendar-toolbar');
-  if(container===root)launch?.classList.toggle('calendar-add',!!toolbar);
-  if(toolbar&&launch){const r=toolbar.getBoundingClientRect();launch.style.setProperty('--calendar-add-top',`${r.top+10}px`);launch.style.setProperty('--calendar-add-right',`${innerWidth-r.right+14}px`);}
-  const grid=container.querySelector('.month-grid.calendar-scroller');if(!grid)return;
-  const nav=root.querySelector('.bottom-nav'),bottom=nav&&getComputedStyle(nav).display!=='none'?nav.getBoundingClientRect().top:innerHeight;
+  const grid=container.querySelector('.calendar-scroller');if(!grid)return;
+  const launch=document.querySelector('#quick-add-root'),nav=root.querySelector('.bottom-nav');
+  const bottom=Math.min(nav&&getComputedStyle(nav).display!=='none'?nav.getBoundingClientRect().top:innerHeight,launch&&!launch.hidden?launch.getBoundingClientRect().top:innerHeight);
   const pageHeight=Number(grid.style.getPropertyValue('--month-height').replace('px','')),position=pageHeight?grid.scrollTop/pageHeight:1;
   grid.style.height=`${Math.max(200,Math.min(800,bottom-grid.getBoundingClientRect().top-12))}px`;
+  if(!grid.matches('.month-grid'))return;
   const height=grid.clientHeight-grid.querySelector('.month-week-labels').offsetHeight;
   grid.style.setProperty('--month-height',`${height}px`);if(pageHeight)grid.scrollTop=position*height;
 }
