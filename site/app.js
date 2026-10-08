@@ -2511,9 +2511,9 @@ const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 const blocked = 'input,textarea,select,[contenteditable]:not([contenteditable="false"]),[data-no-swipe],[draggable="true"],a,video,audio';
 
 class PageNavigator {
-  constructor({ root, routes, state, preview, commit, onMenuTap }) {
+  constructor({ root, routes, state, preview, commit, onMenuTap, onSurface }) {
     this.root = root; this.routes = routes; this.state = state; this.preview = preview; this.commit = commit;
-    this.onMenuTap = onMenuTap;
+    this.onMenuTap = onMenuTap;this.onSurface = onSurface;
     this.gesture = null; this.layer = null; this.animation = null; this.committing = false;
     this.paintFrame = null; this.pendingOffset = null; this.settleAnimations = [];
     this.scrolls = new Map(); this.suppressClickUntil = 0; this.wheelBlockedUntil = 0;
@@ -2803,7 +2803,9 @@ class PageNavigator {
     main.getAnimations().forEach(animation => animation.cancel());
     main.style.transform = 'none'; main.style.opacity = mainOpacity;
     main.style.top = `${mainTop - this.viewportTop}px`;
+    const calendar=main.querySelector('.calendar-scroller'),calendarTop=calendar?.scrollTop,calendarLeft=calendar?.scrollLeft;
     this.outgoing.append(main); this.layer.append(this.outgoing); document.body.append(this.layer);
+    if(calendar){calendar.scrollTop=calendarTop;calendar.scrollLeft=calendarLeft;}
     this.setDestination(destination);
     document.body.classList.add('route-in-motion');
     this.syncIndicator(0);
@@ -2824,7 +2826,7 @@ class PageNavigator {
     this.incoming = document.createElement('div'); this.incoming.className = 'route-screen route-incoming';
     this.incoming.append(preview); this.layer.append(this.incoming);
     if (this.targetScroll > 0) this.targetScroll = Math.min(this.targetScroll, Math.max(0, preview.getBoundingClientRect().height - (innerHeight - this.viewportTop)));
-    preview.style.top = `${-this.targetScroll}px`;
+    preview.style.top = `${-this.targetScroll}px`;this.onSurface?.(preview);
   }
   drag(distance) {
     if (!this.layer) return;
@@ -2924,13 +2926,15 @@ class PageNavigator {
     this.settleAnimations.forEach(animation => animation.cancel()); this.settleAnimations = [];
     if (this.placeholder?.isConnected) {
       const stage = this.routeCommitted ? this.incomingStage : this.outgoingStage;
+      const host=stage.main.querySelector('.calendar-scroller'),top=host?.scrollTop,left=host?.scrollLeft;
       this.restoreWorkspace(stage); this.placeholder.replaceWith(stage.main);
+      if(host){host.scrollTop=top;host.scrollLeft=left;}
     }
     this.placeholder = null; this.outgoingStage = null; this.incomingStage = null; this.routeCommitted = false;
     this.animation = null; this.preparedTemplate = null; this.indicator = null; this.indicatorDestination = null;
     this.layer?.remove(); this.layer = null; this.incoming = null; this.outgoing = null;
     document.body.classList.remove('route-in-motion', 'route-settling');
-    this.root.querySelectorAll('.selection-surface').forEach(el => { el.style.transform = ''; });
+    this.root.querySelectorAll('.selection-surface').forEach(el => { el.style.transform = ''; });this.onSurface?.(this.root);
   }
   cancel() {
     clearTimeout(this.wheelTimer);
@@ -3436,7 +3440,8 @@ function calendarPage(c) {
   const header=HML.html`<div class="calendar-toolbar">${rangeTools(c,mode)}<div class="segmented">${HMEngine.calendarViewOrder(c.d.preferences).map(k=>HML.html`<button data-action="calendar-mode" data-id="${k}" class="${mode===k?'selected':''}" aria-pressed="${mode===k}">${{day:HML.t("일간"),week:HML.t("주간"),month:HML.t("월간")}[k]}</button>`).join('')}</div></div>`;
   let body='';
   if(mode==='month') {
-    body=HML.html`<div class="month-grid calendar-scroller" data-cal-key="${mode}:${c.date}:${e(c.me.id)}" tabindex="0" aria-label="월간 일정"><div class="month-week-labels">${HML.weekdays().map(t=>HML.html`<span>${t.label}</span>`).join('')}</div><div class="month-cells">${monthDays(c.date).slice(0,Math.ceil((((new Date(`${c.date.slice(0,7)}-01T12:00:00Z`).getUTCDay()-HML.firstDay()+7)%7)+new Date(Number(c.date.slice(0,4)),Number(c.date.slice(5,7)),0).getDate())/7)*7).map(date=>{const events=sorted(c.items.filter(a=>a.due_date===date));return HML.html`<div class="month-cell ${date.slice(0,7)!==c.date.slice(0,7)?'outside':''} ${date===today(c.d.family.timezone)?'is-today':''}" data-cal-date="${date}"><button class="month-number" data-action="calendar-day" data-id="${date}" aria-label="${shortDate(date)} 일간 보기">${HML.number(Number(date.slice(-2)))}</button>${events.slice(0,1).map(a=>calendarCard(a,c,'',true)).join('')}${events.length>1?HML.html`<button class="more-events" data-action="calendar-day" data-id="${date}">+${events.length-1}</button>`:''}</div>`;}).join('')}</div></div>`;
+    const months=[-1,0,1].map(step=>{const d=new Date(`${c.date.slice(0,7)}-01T12:00:00Z`);d.setUTCMonth(d.getUTCMonth()+step);return d.toISOString().slice(0,10);});
+    body=HML.html`<div class="month-grid calendar-scroller" data-cal-key="${mode}:${c.date}:${e(c.me.id)}" tabindex="0" aria-label="월간 일정"><div class="month-week-labels">${HML.weekdays().map(t=>HML.html`<span>${t.label}</span>`).join('')}</div>${months.map(month=>HML.html`<section class="calendar-month" data-cal-month="${month}"><h3>${shortDate(month,{year:'numeric',month:'long',day:undefined})}</h3><div class="month-cells">${monthDays(month).slice(0,Math.ceil((((new Date(`${month.slice(0,7)}-01T12:00:00Z`).getUTCDay()-HML.firstDay()+7)%7)+new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate())/7)*7).map(date=>{const events=sorted(c.items.filter(a=>a.due_date===date));if(date.slice(0,7)!==month.slice(0,7))return '<div class="month-cell outside" aria-hidden="true"></div>';return HML.html`<div class="month-cell ${date.slice(0,7)!==month.slice(0,7)?'outside':''} ${date===today(c.d.family.timezone)?'is-today':''}" data-cal-date="${date}"><button class="month-number" data-action="calendar-day" data-id="${date}" aria-label="${shortDate(date)} 일간 보기">${HML.number(Number(date.slice(-2)))}</button>${events.slice(0,1).map(a=>calendarCard(a,c,'',true)).join('')}${events.length>1?HML.html`<button class="more-events" data-action="calendar-day" data-id="${date}">+${events.length-1}</button>`:''}</div>`;}).join('')}</div></section>`).join('')}</div>`;
   } else {
     const dates=mode==='week'?weekDays(c.date):[c.date], timed=c.items.filter(a=>dates.includes(a.due_date)&&calendarTimed(a));
     const first=timed.length?Math.min(...timed.map(a=>calendarMinute(a.start_time))):480;
@@ -3689,8 +3694,8 @@ function renderSignedApp(preparedTemplate) {
   }
 }
 
-function render({ quiet = false, horizontal = false, preparedTemplate = null } = {}) {
-  cancelCalendarGesture();
+function render({ quiet = false, horizontal = false, preparedTemplate = null, calendarOffset = null, calendarEdge = null } = {}) {
+  stopCalendarScroll();cancelCalendarGesture();
   const oldCalendar=root.querySelector('.calendar-scroller'), calendarScroll=oldCalendar?{key:oldCalendar.dataset.calKey,top:oldCalendar.scrollTop,left:oldCalendar.scrollLeft}:null;
   navigation?.beforeRender();
   HML.adopt(s.data);
@@ -3700,8 +3705,9 @@ function render({ quiet = false, horizontal = false, preparedTemplate = null } =
   else if (!s.data) root.innerHTML = HML.html`<main class="onboarding"><div class="auth-language">${HML.languageButton()}</div><div class="brand">${logo()}<span>하루모아</span></div><section class="panel"><h1>내 공간을 불러옵니다</h1><p>${e(s.error || HML.t("서버와 연결하고 있어요."))}</p>${s.error ? btn(HML.t("다시 연결"), 'refresh', { cls: 'btn primary' }) + btn(HML.t("로그아웃"), 'logout', { cls: 'text-button' }) : ''}</section></main>`;
   else if (!s.data.profile) root.innerHTML = onboardingView(s.onboardingMode);
   else renderSignedApp(preparedTemplate);
+  fitMonthCalendar();
   const newCalendar=root.querySelector('.calendar-scroller');
-  if(newCalendar){newCalendar.scrollTop=calendarScroll?.key===newCalendar.dataset.calKey?calendarScroll.top:Number(newCalendar.dataset.calInitial||0);newCalendar.scrollLeft=calendarScroll?.key===newCalendar.dataset.calKey?calendarScroll.left:0;}
+  positionCalendar(newCalendar,calendarScroll,{calendarOffset,calendarEdge});
   if(calendarSelected?.actor===s.data?.profile?.id)newCalendar?.querySelector(`[data-cal-id="${CSS.escape(calendarSelected.id)}"][data-cal-editable]`)?.classList.add('calendar-item-selected');
   else calendarSelected=null;
   if (focusId) { const next = document.getElementById(focusId); if (next) { next.focus({ preventScroll: true }); if (start !== null && next instanceof HTMLInputElement && next.type !== 'number') try { next.setSelectionRange(start, start); } catch {} } }
@@ -3709,14 +3715,20 @@ function render({ quiet = false, horizontal = false, preparedTemplate = null } =
   fitMonthCalendar();updateHomeWidgets();
   lastRenderKey = renderKey; composer?.syncState(); window.HM7?.afterRender(); window.HML?.afterRender(); window.HMGoogleUI?.afterRender(); creation?.syncState();
 }
-function fitMonthCalendar() {
+function positionCalendar(host,previous,{calendarOffset=null,calendarEdge=null}={}) {
+  if(host){const month=host.querySelector(`[data-cal-month="${host.dataset.calKey.split(':')[1].slice(0,7)}-01"]`),initial=month?month.offsetTop-host.querySelector('.month-week-labels').offsetHeight:Number(host.dataset.calInitial||0);host.scrollTop=calendarOffset!==null?initial+calendarOffset:calendarEdge==='start'?0:calendarEdge==='end'?host.scrollHeight:previous?.key===host.dataset.calKey?previous.top:initial;host.scrollLeft=previous?.key===host.dataset.calKey?previous.left:0;host.dataset.calPositioned='1';}
+}
+function fitMonthCalendar(container=root) {
+  if(!(container instanceof Element))container=root;
   const launch=document.querySelector('#quick-add-root'),toolbar=root.querySelector('#main .calendar-toolbar');
-  launch?.classList.toggle('calendar-add',!!toolbar);
+  if(container===root)launch?.classList.toggle('calendar-add',!!toolbar);
   if(toolbar&&launch){const r=toolbar.getBoundingClientRect();launch.style.setProperty('--calendar-add-top',`${r.top+10}px`);launch.style.setProperty('--calendar-add-right',`${innerWidth-r.right+14}px`);}
-  const grid=root.querySelector('.month-grid.calendar-scroller');if(!grid)return;
+  const grid=container.querySelector('.month-grid.calendar-scroller');if(!grid)return;
   const nav=root.querySelector('.bottom-nav'),bottom=nav&&getComputedStyle(nav).display!=='none'?nav.getBoundingClientRect().top:innerHeight;
-  const rows=grid.querySelectorAll('.month-cell').length/7;
-  grid.style.height=`${Math.max(rows*48+30,Math.min(800,bottom-grid.getBoundingClientRect().top-12))}px`;
+  const pageHeight=Number(grid.style.getPropertyValue('--month-height').replace('px','')),position=pageHeight?grid.scrollTop/pageHeight:1;
+  grid.style.height=`${Math.max(200,Math.min(800,bottom-grid.getBoundingClientRect().top-12))}px`;
+  const height=grid.clientHeight-grid.querySelector('.month-week-labels').offsetHeight;
+  grid.style.setProperty('--month-height',`${height}px`);if(pageHeight)grid.scrollTop=position*height;
 }
 window.addEventListener('resize',fitMonthCalendar);
 window.visualViewport?.addEventListener('resize',fitMonthCalendar);
@@ -3821,7 +3833,7 @@ async function refresh() {
       s.data = data; s.lastSync = new Date(); s.error = ''; s.sync = 'saved';updateHomeWidgets();queueMicrotask(openHomeWidget);
       if (data.profile) s.owner = data.profile.id;
       if (s.familyOwner && (data.profile?.role !== 'parent' || !data.members.some(m => m.id === s.familyOwner && m.role === 'child'))) s.familyOwner = '';
-      if (changed) {if(calendarGesture)calendarDeferredRender=true;else render();} else updateSync(); HMGoogleUI.afterRender(); window.HM7?.afterRefresh().catch(() => {});
+      if (changed) {if(calendarGesture||calendarScrollFrame||calendarScrollTimer)calendarDeferredRender=true;else render();} else updateSync(); HMGoogleUI.afterRender(); window.HM7?.afterRefresh().catch(() => {});
     } catch (error) {
       if (gateway.mode === 'cloud' && !gateway.session) { s.signedIn = false; s.data = null; s.owner = ''; s.authMessage = HML.t("세션이 만료되었습니다. 다시 로그인해 주세요."); closeDialog(true); }
       s.error = friendlyError(error); s.sync = navigator.onLine === false ? 'offline' : 'error'; render(); throw error;
@@ -4176,6 +4188,34 @@ function notificationsModal() {
   showDialog(HML.t("앱 안의 알림"), HML.html`<div class="dialog-body"><div class="notification-row">${icon('check', 18)} 오늘 남은 내 할 일 <b>${mine.length}개</b></div><div class="notification-row">${icon('gift', 18)} 지급 확인 대기 보상 <b>${pending.length}개</b></div><div class="modal-note">이 목록은 앱 안의 상태 요약입니다. 일정 알림과 앱 종료 상태의 푸시 알림은 아직 포함하지 않았어요.</div></div>`, HML.html`<div class="dialog-foot">${btn(HML.t("보상함 보기"), 'nav', { id: 'rewards', cls: 'btn primary' })}</div>`);
 }
 let calendarGesture=null, calendarClickBlock=null, calendarSelected=null, calendarDeferredRender=false;
+let calendarScrollFrame=0,calendarScrollTimer=0,calendarWheelUntil=0;
+function stopCalendarScroll(){cancelAnimationFrame(calendarScrollFrame);clearTimeout(calendarScrollTimer);calendarScrollFrame=calendarScrollTimer=0;}
+function settleCalendarScroll(host){
+  stopCalendarScroll();if(calendarGesture||!host.isConnected||!host.closest('#app'))return;
+  const months=[...host.querySelectorAll('[data-cal-month]')],height=Number(host.style.getPropertyValue('--month-height').replace('px',''));
+  const month=months[Math.max(0,Math.min(months.length-1,Math.round(host.scrollTop/height)))];
+  if(month&&month.dataset.calMonth.slice(0,7)!==s.date.slice(0,7)){
+    const offset=host.scrollTop-(month.offsetTop-host.querySelector('.month-week-labels').offsetHeight);
+    calendarDeferredRender=false;goDate(month.dataset.calMonth,{quiet:true,calendarOffset:offset});
+  }else if(calendarDeferredRender){calendarDeferredRender=false;render({quiet:true});}
+}
+function glideCalendarScroll(g,velocity){
+  stopCalendarScroll();if(matchMedia('(prefers-reduced-motion:reduce)').matches)velocity=0;
+  let speed=Math.max(-2.5,Math.min(2.5,-velocity)),last=performance.now();
+  const step=now=>{const dt=Math.min(32,now-last);last=now;speed*=Math.exp(-dt/170);const before=g.host.scrollTop;g.host.scrollTop+=speed*dt;
+    if(!g.host.isConnected||Math.abs(speed)<.035||Math.abs(g.host.scrollTop-before)<.1){settleCalendarScroll(g.host);return;}
+    calendarScrollFrame=requestAnimationFrame(step);
+  };
+  calendarScrollFrame=requestAnimationFrame(step);
+}
+document.addEventListener('scroll',event=>{const host=event.target;if(!host.matches?.('.calendar-scroller')||!host.closest('#app')||calendarGesture||calendarScrollFrame)return;clearTimeout(calendarScrollTimer);calendarScrollTimer=setTimeout(()=>settleCalendarScroll(host),140);},true);
+document.addEventListener('wheel',event=>{
+  const host=event.target.closest('.calendar-scroller');if(!host||s.view!=='calendar'||s.calendarMode==='month'||Math.abs(event.deltaX)>Math.abs(event.deltaY)||!navigation.available())return;
+  const now=performance.now(),fresh=now>calendarWheelUntil;calendarWheelUntil=now+180;
+  if(fresh&&Math.abs(event.deltaY)>=10&&(event.deltaY>0?host.scrollTop>=host.scrollHeight-host.clientHeight-2:host.scrollTop<=2)){
+    event.preventDefault();goDate(moveDate(event.deltaY>0?1:-1,s.calendarMode),{quiet:true,calendarEdge:event.deltaY>0?'start':'end'});
+  }
+},{passive:false});
 const {swipeIntent:calendarSwipeIntent,commitSwipe:calendarCommitSwipe}=__modules["src/lib/navigation.js"];
 function calendarCanEdit(row) { return owned(row)&&!row.done&&!row.completed_at&&!row.generated&&!row.google?.imported; }
 function calendarBrowseMove(event,g) {
@@ -4194,17 +4234,23 @@ function calendarBrowseMove(event,g) {
   if(event.cancelable)event.preventDefault();
   const now=performance.now(),position=g.axis==='horizontal'?event.clientX:event.clientY;
   if(now>g.lastTime&&position!==g.lastPosition){g.velocity=g.velocity*.2+(position-g.lastPosition)/Math.max(1,now-g.lastTime)*.8;g.lastPosition=position;g.lastTime=now;}
+  if(g.axis==='vertical')g.host.scrollTop=g.scrollTop-dy;
   if(g.axis==='horizontal'&&g.mode==='week')g.host.scrollLeft=(g.rtl?-1:1)*Math.max(0,Math.min(g.maxX,g.scrollX+(g.rtl?dx:-dx)));
 }
 function calendarBrowseEnd(event,g) {
   calendarBrowseMove(event,g);
   const distance=g.axis==='horizontal'?event.clientX-g.x:event.clientY-g.y;
   const velocity=performance.now()-g.lastTime>100?0:g.velocity;
-  cancelCalendarGesture();
+  cancelCalendarGesture({defer:g.axis==='vertical'});
   if(!g.axis)return;
   navigation.suppressClickUntil=performance.now()+240;
-  if(!calendarCommitSwipe(distance,velocity,g.axis==='horizontal'?g.host.clientWidth:Math.min(360,g.host.clientHeight))||s.view!=='calendar'||s.date!==g.date||s.calendarMode!==g.mode||s.data?.profile?.id!==g.actor||s.data?.family?.id!==g.family||gateway!==g.gateway)return;
-  if(g.axis==='vertical'){goDate(moveDate(distance<0?1:-1,g.mode),{quiet:true});return;}
+  if(s.view!=='calendar'||s.date!==g.date||s.calendarMode!==g.mode||s.data?.profile?.id!==g.actor||s.data?.family?.id!==g.family||gateway!==g.gateway)return;
+  if(!calendarCommitSwipe(distance,velocity,g.axis==='horizontal'?g.host.clientWidth:Math.min(360,g.host.clientHeight))){if(g.axis==='vertical')settleCalendarScroll(g.host);return;}
+  if(g.axis==='vertical'){
+    if(g.mode!=='month'&&(distance<0?g.scrollTop>=g.maxY-2:g.scrollTop<=2)){goDate(moveDate(distance<0?1:-1,g.mode),{quiet:true,calendarEdge:distance<0?'start':'end'});return;}
+    glideCalendarScroll(g,velocity);return;
+  }
+  if(g.verticalOnly)return;
   const physical=distance<0?1:-1,direction=physical*(g.rtl?-1:1);
   // Reaching a week edge consumes this stroke. A new stroke from that edge changes view.
   if(g.mode==='week'&&(direction>0?g.scrollX<g.maxX-2:g.scrollX>2))return;
@@ -4213,9 +4259,9 @@ function calendarBrowseEnd(event,g) {
   s.calendarMode=mode;render({quiet:true});
   if(mode==='week'&&direction<0){const host=root.querySelector('.calendar-scroller');host.scrollLeft=(g.rtl?-1:1)*(host.scrollWidth-host.clientWidth);}
 }
-function cancelCalendarGesture() {
+function cancelCalendarGesture({defer=false}={}) {
   const g=calendarGesture;calendarGesture=null;if(!g)return;
-  if(calendarDeferredRender){calendarDeferredRender=false;queueMicrotask(()=>render({quiet:true}));}
+  if(calendarDeferredRender&&!defer){calendarDeferredRender=false;queueMicrotask(()=>render({quiet:true}));}
   if(g.row&&(g.armed||g.pan))calendarClickBlock={id:g.row.id,until:Date.now()+650};
   clearTimeout(g.timer);cancelAnimationFrame(g.frame);g.preview?.remove();g.status?.remove();
   g.item?.classList.remove('calendar-dragging');g.target?.classList.remove('calendar-drop-target');
@@ -4257,17 +4303,17 @@ function calendarAutoScroll(g) {
   g.frame=requestAnimationFrame(()=>calendarAutoScroll(g));
 }
 document.addEventListener('pointerdown',event=>{
-  calendarClickBlock=null;
+  calendarClickBlock=null;stopCalendarScroll();
   if(calendarGesture)cancelCalendarGesture();
   const item=event.target.closest('[data-cal-id]'),pan=event.target.closest('[data-cal-pan]'),host=event.target.closest('.calendar-scroller');
   const row=item?getActivity(item.dataset.calId):null;
   if(!host||s.busy||!event.isPrimary||event.button!==0||document.querySelector('dialog[open]'))return;
-  const browse=s.view==='calendar'&&!pan&&!event.target.closest('[data-no-swipe],input,textarea,select,a');
-  if(browse&&(!navigation.available()||event.clientX<=24||event.clientX>=innerWidth-24))return;
-  if(pan&&!item){calendarGesture={host,id:event.pointerId,lastX:event.clientX,lastY:event.clientY,x:event.clientX,y:event.clientY,capture:pan,pan:true};return;}
+  const browse=s.view==='calendar'&&(!!pan||!event.target.closest('[data-no-swipe],input,textarea,select,a'));
+  if(browse&&(!navigation.available()||(!pan&&(event.clientX<=24||event.clientX>=innerWidth-24))))return;
+  if(pan&&!item&&!browse){calendarGesture={host,id:event.pointerId,lastX:event.clientX,lastY:event.clientY,x:event.clientX,y:event.clientY,capture:pan,pan:true};return;}
   if(!browse&&!calendarCanEdit(row))return;
   const rect=(item||host).getBoundingClientRect();
-  const g=calendarGesture={item,host,row:row?structuredClone(row):null,gateway,actor:s.data.profile.id,family:s.data.family.id,id:event.pointerId,x:event.clientX,y:event.clientY,lastX:event.clientX,lastY:event.clientY,scrollTop:host.scrollTop,timeline:!!host.dataset.calMode,edge:event.target.closest('[data-cal-edge]')?.dataset.calEdge,point:{x:event.clientX,y:event.clientY},offsetX:event.clientX-rect.left,offsetY:event.clientY-rect.top,armed:false,moved:false,pan:false,browse,mode:s.calendarMode,date:s.date,rtl:HML.dir()==='rtl',scrollX:Math.abs(host.scrollLeft),maxX:host.scrollWidth-host.clientWidth,started:performance.now(),lastTime:performance.now(),lastPosition:event.clientX,velocity:0};
+  const g=calendarGesture={item,host,row:row?structuredClone(row):null,gateway,actor:s.data.profile.id,family:s.data.family.id,id:event.pointerId,x:event.clientX,y:event.clientY,lastX:event.clientX,lastY:event.clientY,scrollTop:host.scrollTop,timeline:!!host.dataset.calMode,edge:event.target.closest('[data-cal-edge]')?.dataset.calEdge,point:{x:event.clientX,y:event.clientY},offsetX:event.clientX-rect.left,offsetY:event.clientY-rect.top,armed:false,moved:false,pan:false,browse,verticalOnly:!!pan,maxY:host.scrollHeight-host.clientHeight,mode:s.calendarMode,date:s.date,rtl:HML.dir()==='rtl',scrollX:Math.abs(host.scrollLeft),maxX:host.scrollWidth-host.clientWidth,started:performance.now(),lastTime:performance.now(),lastPosition:event.clientX,velocity:0};
   g.capture=event.target.closest('button')||item||host;
   if(!calendarCanEdit(row))return;
   g.timer=setTimeout(()=>{
@@ -4316,7 +4362,7 @@ document.addEventListener('click',event=>{
   if(event.detail!==0&&calendarClickBlock&&Date.now()<calendarClickBlock.until&&event.target.closest('[data-cal-id]')?.dataset.calId===calendarClickBlock.id){event.preventDefault();event.stopImmediatePropagation();calendarClickBlock=null;}
 },true);
 document.addEventListener('contextmenu',event=>{if(event.target.closest('[data-cal-editable],.priority-rank-spin'))event.preventDefault();});
-document.addEventListener('pointercancel',event=>{if(calendarGesture?.id===event.pointerId)cancelCalendarGesture();});
+document.addEventListener('pointercancel',event=>{const g=calendarGesture;if(g?.id===event.pointerId){if(g.browse&&g.axis==='vertical')g.host.scrollTop=g.scrollTop;cancelCalendarGesture();}});
 // Capturing the button transfers the implicit touch capture from its title/time child.
 document.addEventListener('lostpointercapture',event=>{if(calendarGesture?.id===event.pointerId&&event.target===calendarGesture.capture)cancelCalendarGesture();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape')cancelCalendarGesture();});
@@ -4539,6 +4585,7 @@ navigation = new PageNavigator({
   routes: NAV,
   state: () => s,
   onMenuTap: () => Feedback.tap(),
+  onSurface: surface=>{fitMonthCalendar(surface);const host=surface.querySelector('.calendar-scroller');if(host&&!host.dataset.calPositioned)positionCalendar(host,null);},
   // Navigation clears the Today filters. Its inert preview must use the same
   // state as commit, otherwise rows change height as the overlay is removed.
   preview: (view, entryContext) => appView({ ...s, view, calendarMode: calendarRouteMode(view, entryContext), owner: s.data.profile.id, date: s.view === 'family' && view !== 'family' ? (s.personalDate || today(s.data.family.timezone)) : s.date, search: '', category: '', taskFilter: 'all' }),

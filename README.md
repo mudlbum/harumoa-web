@@ -2,7 +2,7 @@
 
 iOS 빌드용 프로젝트는 [ios/README-ko.md](ios/README-ko.md)에 있습니다. 현재 컴파일 확인용 IPA는 **Apple 서명이 없어 아이폰에 직접 설치할 수 없습니다.** 설치에는 Apple 서명/기기 등록 또는 TestFlight 준비가 필요합니다. iOS Google 로그인 등록과 가족 파일 선택은 별도 대기 상태입니다.
 
-Android v0.9.28와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
+Android v0.9.29와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 
@@ -10,7 +10,7 @@ Android v0.9.28와 같은 데이터 모델을 사용하는 PC·모바일 브라�
 
 공개 문의 담당자는 Jaiven Lee이며 이메일은 mudlbum@gmail.com입니다. 이 페이지는 현재 시험 버전의 처리와 제한을 설명합니다. Google OAuth 공개 심사와 스토어 배포는 아직 완료되지 않았습니다. 첫 출시 대상은 한국·미국·캐나다의 만8세 이상입니다. 기본 기능은 무료이고 Android Pro 광고 제거는 판매 전입니다. 현재 웹과 APK에는 광고가 없습니다. 만8–13세의 Google·공유·민감 기능은 실제 보호자 동의 확인 절차가 준비될 때까지 제한하며, 만8세 미만의 저장·연결은 막습니다. 이 제한을 검증된 보호자 동의 완료로 표시하지 않습니다.
 
-**Android 가족 테스트:** [v0.9.28 APK 바로 내려받기](https://mudlbum.github.io/harumoa-web/downloads/harumoa-v0.9.28.apk) · [다운로드 안내 페이지](https://mudlbum.github.io/harumoa-web/download.html) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.28) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.28/harumoa-family-test-v0.9.28-ko.md)
+**Android 가족 테스트:** [v0.9.29 APK 바로 내려받기](https://mudlbum.github.io/harumoa-web/downloads/harumoa-v0.9.29.apk) · [다운로드 안내 페이지](https://mudlbum.github.io/harumoa-web/download.html) · [릴리스와 SHA-256](https://github.com/mudlbum/harumoa-web/releases/tag/v0.9.29) · [가족 테스트 안내](https://github.com/mudlbum/harumoa-web/releases/download/v0.9.29/harumoa-family-test-v0.9.29-ko.md)
 
 Pages 배포는 공개 릴리스 APK를 받아 고정한 SHA-256을 확인한 뒤 `downloads/`에서 제공합니다. APK는 Git 저장소에 커밋하지 않습니다. 다음 Android 버전 배포 시 `deploy/web/pages.yml`의 파일 주소·버전·체크섬과 다운로드 안내를 함께 갱신합니다.
 

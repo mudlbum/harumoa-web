@@ -513,13 +513,16 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 @media(hover:hover){.calendar-item:hover .calendar-resize{display:flex}}
 @media(min-width:901px){.calendar-drag-status{bottom:24px}}
 
-/* Month fills the available screen. Extra records open in the existing day view. */
+/* Adjacent months share one scroll surface; each month fills the available screen. Extra records open in the existing day view. */
 .calendar-main.screen-main{padding-bottom:12px}
-.month-grid.calendar-scroller{height:calc(100dvh - 250px);display:flex;flex-direction:column;max-height:none;overflow:hidden;touch-action:pan-y pinch-zoom}
-.month-grid .month-week-labels{flex-shrink:0}
+.month-grid.calendar-scroller{height:calc(100dvh - 250px);position:relative;max-height:none;overflow:auto;touch-action:pan-y pinch-zoom}
+.month-grid .month-week-labels{height:30px;align-items:center}
+.calendar-month{height:var(--month-height,500px);display:flex;flex-direction:column}
+.calendar-month h3{flex-shrink:0;height:30px;margin:0;display:flex;align-items:center;justify-content:center;font-size:14px;background:#f8faf6;border-top:1px solid #dce6da}
 .month-grid .month-cells{flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .month-grid .month-cell{min-height:0;padding:2px;position:relative;display:flex;flex-direction:column}
 .month-grid .month-number{height:22px;min-height:22px;width:100%;border-radius:5px;margin:0;font-size:11px}
+.month-grid .month-cell:has(.more-events) .month-number{width:calc(100% - 22px)}
 .month-grid .month-event{margin:1px 0;flex:1;min-height:0}
 .month-grid .month-event .calendar-open{min-height:0;padding:2px;justify-content:center}
 .month-grid .month-event .calendar-open small{display:none}
