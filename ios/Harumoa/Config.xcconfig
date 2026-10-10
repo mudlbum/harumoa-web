@@ -1,8 +1,8 @@
 // Public configuration, not signing credentials. Set an iOS-type Google OAuth ID.
 GOOGLE_IOS_CLIENT_ID =
 GOOGLE_REVERSED_CLIENT_ID = com.harumoa.unconfigured.google
-MARKETING_VERSION = 0.9.33
-CURRENT_PROJECT_VERSION = 123
+MARKETING_VERSION = 0.9.34
+CURRENT_PROJECT_VERSION = 124
 PRODUCT_BUNDLE_IDENTIFIER = com.harumoa.app.iostest
 IPHONEOS_DEPLOYMENT_TARGET = 17.0
 SWIFT_VERSION = 5.0

@@ -1,3 +1,7 @@
+## v0.9.34
+
+Unfinished tasks offer Keep, Schedule and Mark complete. Choices save locally before Google sync. End time triggers the check; untimed tasks use the end of the active day. Enable reminders and Ask first in settings. Android uses native notification actions; web notifications require the page to be running. Device/background delivery remains unverified. Full legacy Node run has 77 passes and 3 unavailable files due to missing server modules.
+
 ## v0.9.33
 
 Records and attachment bytes save on the device before Google requests. Pending revisions survive a restart and retry after reconnection. Today has category tabs with counts and direct editing; deleting a category keeps its tasks. Google/Android HTTP and authorization tests use fixtures. Physical device and live Google verification remain pending.
@@ -6,7 +10,7 @@ Records and attachment bytes save on the device before Google requests. Pending 
 
 iOS 빌드용 프로젝트는 [ios/README-ko.md](ios/README-ko.md)에 있습니다. 현재 컴파일 확인용 IPA는 **Apple 서명이 없어 아이폰에 직접 설치할 수 없습니다.** 설치에는 Apple 서명/기기 등록 또는 TestFlight 준비가 필요합니다. iOS Google 로그인 등록과 가족 파일 선택은 별도 대기 상태입니다.
 
-Android v0.9.33와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
+Android v0.9.34와 같은 데이터 모델을 사용하는 PC·모바일 브라우저용 하루모아입니다. `site/`에는 배포할 정적 파일만 들어 있습니다. GitHub Pages는 웹 화면을 제공하고, 개인 기록은 사용자의 Google Sheets·Drive에 저장합니다.
 
 **웹 접속:** [하루모아 열기](https://mudlbum.github.io/harumoa-web/) · [공개 GitHub 저장소](https://github.com/mudlbum/harumoa-web)
 

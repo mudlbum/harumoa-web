@@ -427,6 +427,9 @@ body.route-in-motion #app>.workspace>#main{opacity:0}
 .hm-attachment-info .hm-switch i{pointer-events:none}
 
 .hm-record-state .btn{min-height:44px;font-size:13px;margin:8px 0 0;display:block}
+.hm-unfinished .hm-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.hm-unfinished .hm-row .btn{min-height:46px;white-space:normal}
+@media(max-width:500px){.hm-unfinished .hm-row{grid-template-columns:1fr}}
 .creation-picker{flex:none;min-width:0;background:#fff;padding:0 20px 7px;border-bottom:1px solid var(--line,#e1e9e1)}
 .creation-types{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;touch-action:pan-x;padding:3px 0 5px}
 .creation-types button{flex:none;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 12px;border:1px solid #dce5dc;border-radius:13px;background:#f7f9f5;color:#586a60;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
